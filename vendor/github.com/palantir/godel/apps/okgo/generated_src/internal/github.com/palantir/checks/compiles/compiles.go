@@ -35,8 +35,8 @@ func AmalgomatedMain() {
 	const pkgsFlagName = "pkgs"
 	app := cli.NewApp(cli.DebugHandler(errorstringer.SingleStack))
 	app.Flags = append(app.Flags, flag.StringSlice{
-		Name:  pkgsFlagName,
-		Usage: "paths to the pacakges to check",
+		Name:	pkgsFlagName,
+		Usage:	"paths to the pacakges to check",
 	})
 	app.Action = func(ctx cli.Context) error {
 		wd, err := dirs.GetwdEvalSymLinks()

@@ -157,7 +157,7 @@ func importPathToNameGoPathParse(importPath, srcDir string) (packageName string,
 	if err != nil {
 		return "", err
 	}
-	sort.Strings(names) // to have predictable behavior
+	sort.Strings(names)	// to have predictable behavior
 	var lastErr error
 	var nfile int
 	for _, name := range names {
@@ -197,7 +197,7 @@ func importPathToNameGoPathParse(importPath, srcDir string) (packageName string,
 	return "", fmt.Errorf("no importable package found in %d Go files", nfile)
 }
 
-var stdImportPackage = map[string]string{} // "net/http" => "http"
+var stdImportPackage = map[string]string{}	// "net/http" => "http"
 
 func init() {
 	// Nothing in the standard library has a package name not

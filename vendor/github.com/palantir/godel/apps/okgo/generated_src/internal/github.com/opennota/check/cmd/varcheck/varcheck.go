@@ -14,8 +14,8 @@
 package amalgomated
 
 import (
-	"fmt"
 	"github.com/palantir/godel/apps/okgo/generated_src/internal/github.com/opennota/check/cmd/varcheck/amalgomated_flag"
+	"fmt"
 	"go/ast"
 	"go/build"
 	"go/token"
@@ -25,8 +25,8 @@ import (
 	"strings"
 
 	"github.com/kisielk/gotool"
-	"go/types"
 	"golang.org/x/tools/go/loader"
+	"go/types"
 )
 
 var (
@@ -34,16 +34,16 @@ var (
 )
 
 type object struct {
-	pkgPath string
-	name    string
+	pkgPath	string
+	name	string
 }
 
 type visitor struct {
-	prog       *loader.Program
-	pkg        *loader.PackageInfo
-	uses       map[object]int
-	positions  map[object]token.Position
-	insideFunc bool
+	prog		*loader.Program
+	pkg		*loader.PackageInfo
+	uses		map[object]int
+	positions	map[object]token.Position
+	insideFunc	bool
 }
 
 func getKey(obj types.Object) object {
@@ -58,8 +58,8 @@ func getKey(obj types.Object) object {
 	}
 
 	return object{
-		pkgPath: pkgPath,
-		name:    obj.Name(),
+		pkgPath:	pkgPath,
+		name:		obj.Name(),
 	}
 }
 
@@ -151,10 +151,10 @@ func AmalgomatedMain() {
 		}
 
 		v := &visitor{
-			prog:      program,
-			pkg:       pkgInfo,
-			uses:      uses,
-			positions: positions,
+			prog:		program,
+			pkg:		pkgInfo,
+			uses:		uses,
+			positions:	positions,
 		}
 
 		for _, f := range v.pkg.Files {

@@ -61,10 +61,10 @@ func Run(cfgParam string, paths []string) error {
 
 func run(prog *loader.Program, cfg Config) []OutParamError {
 	var errs []OutParamError
-	var mut sync.Mutex // guards errs
+	var mut sync.Mutex	// guards errs
 	var wg sync.WaitGroup
 	for _, pkgInfo := range prog.InitialPackages() {
-		if pkgInfo.Pkg.Path() == "unsafe" { // not a real package
+		if pkgInfo.Pkg.Path() == "unsafe" {	// not a real package
 			continue
 		}
 
@@ -73,11 +73,11 @@ func run(prog *loader.Program, cfg Config) []OutParamError {
 		go func(pkgInfo *loader.PackageInfo) {
 			defer wg.Done()
 			v := &visitor{
-				prog:   prog,
-				pkg:    pkgInfo,
-				lines:  map[string][]string{},
-				errors: []OutParamError{},
-				cfg:    cfg,
+				prog:	prog,
+				pkg:	pkgInfo,
+				lines:	map[string][]string{},
+				errors:	[]OutParamError{},
+				cfg:	cfg,
 			}
 			for _, astFile := range pkgInfo.Files {
 				exprs.Walk(v, astFile)
@@ -127,11 +127,11 @@ func load(paths []string) (*loader.Program, error) {
 }
 
 type visitor struct {
-	prog   *loader.Program
-	pkg    *loader.PackageInfo
-	lines  map[string][]string
-	errors []OutParamError
-	cfg    Config
+	prog	*loader.Program
+	pkg	*loader.PackageInfo
+	lines	map[string][]string
+	errors	[]OutParamError
+	cfg	Config
 }
 
 func (v *visitor) Visit(expr ast.Expr) {

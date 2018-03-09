@@ -80,15 +80,15 @@ func usage() {
 }
 
 var (
-	flagV      bool
-	flagShort  bool
-	flagRace   bool
-	flagList   bool
-	flagForce  bool
-	flagTiming bool
-	failed     bool
-	cacheDir   string
-	start      = time.Now()
+	flagV		bool
+	flagShort	bool
+	flagRace	bool
+	flagList	bool
+	flagForce	bool
+	flagTiming	bool
+	failed		bool
+	cacheDir	string
+	start		= time.Now()
 )
 
 func AmalgomatedMain() {
@@ -258,36 +258,36 @@ func AmalgomatedMain() {
 }
 
 var (
-	pkgInfo   = map[string]*Package{}
-	outOfSync bool
+	pkgInfo		= map[string]*Package{}
+	outOfSync	bool
 )
 
 type Package struct {
-	Dir          string
-	ImportPath   string
-	Standard     bool
-	Goroot       bool
-	Stale        bool
-	GoFiles      []string
-	CgoFiles     []string
-	CFiles       []string
-	CXXFiles     []string
-	MFiles       []string
-	HFiles       []string
-	SFiles       []string
-	SwigFiles    []string
-	SwigCXXFiles []string
-	SysoFiles    []string
-	Imports      []string
-	Deps         []string
-	Incomplete   bool
-	TestGoFiles  []string
-	TestImports  []string
-	XTestGoFiles []string
-	XTestImports []string
+	Dir		string
+	ImportPath	string
+	Standard	bool
+	Goroot		bool
+	Stale		bool
+	GoFiles		[]string
+	CgoFiles	[]string
+	CFiles		[]string
+	CXXFiles	[]string
+	MFiles		[]string
+	HFiles		[]string
+	SFiles		[]string
+	SwigFiles	[]string
+	SwigCXXFiles	[]string
+	SysoFiles	[]string
+	Imports		[]string
+	Deps		[]string
+	Incomplete	bool
+	TestGoFiles	[]string
+	TestImports	[]string
+	XTestGoFiles	[]string
+	XTestImports	[]string
 
-	testHash string
-	pkgHash  string
+	testHash	string
+	pkgHash		string
 }
 
 func readPkgs(pkgs []string) {

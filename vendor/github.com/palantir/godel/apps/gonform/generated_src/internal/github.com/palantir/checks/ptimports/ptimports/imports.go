@@ -121,7 +121,7 @@ func godepsPath(filename string) string {
 	for {
 		fi, err := os.Stat(filepath.Join(dir, "Godeps"))
 		if err == nil && fi.IsDir() {
-			break // found
+			break	// found
 		}
 		if err != nil && !os.IsNotExist(err) {
 			return ""
@@ -278,7 +278,7 @@ func matchSpace(orig []byte, src []byte) []byte {
 		} else {
 			src = nil
 		}
-		if len(line) > 0 && line[0] != '\n' { // not blank
+		if len(line) > 0 && line[0] != '\n' {	// not blank
 			_, _ = b.Write(indent)
 		}
 		_, _ = b.Write(line)

@@ -36,35 +36,35 @@ import (
 )
 
 const (
-	pkgsFlagName         = "pkgs"
-	projectPkgFlagName   = "project-package"
-	fullPathFlagName     = "full"
-	printPkgInfoFlagName = "print-pkg-info"
-	ignoreFlagName       = "ignore"
+	pkgsFlagName		= "pkgs"
+	projectPkgFlagName	= "project-package"
+	fullPathFlagName	= "full"
+	printPkgInfoFlagName	= "print-pkg-info"
+	ignoreFlagName		= "ignore"
 )
 
 var (
-	pkgsFlag = flag.StringSlice{
-		Name:  pkgsFlagName,
-		Usage: "paths to the packages to check",
+	pkgsFlag	= flag.StringSlice{
+		Name:	pkgsFlagName,
+		Usage:	"paths to the packages to check",
 	}
-	projectPkgFlag = flag.BoolFlag{
-		Name:  projectPkgFlagName,
-		Usage: "use the 'project' paradigm to interpret packages and only output projects that are unused",
-		Value: true,
+	projectPkgFlag	= flag.BoolFlag{
+		Name:	projectPkgFlagName,
+		Usage:	"use the 'project' paradigm to interpret packages and only output projects that are unused",
+		Value:	true,
 	}
-	fullPathFlag = flag.BoolFlag{
-		Name:  fullPathFlagName,
-		Alias: "f",
-		Usage: "include full path of unused packages (default omits path to vendor directory)",
+	fullPathFlag	= flag.BoolFlag{
+		Name:	fullPathFlagName,
+		Alias:	"f",
+		Usage:	"include full path of unused packages (default omits path to vendor directory)",
 	}
-	printPkgInfoFlag = flag.BoolFlag{
-		Name:  printPkgInfoFlagName,
-		Usage: "print all project packages and vendored packages that are found before execution",
+	printPkgInfoFlag	= flag.BoolFlag{
+		Name:	printPkgInfoFlagName,
+		Usage:	"print all project packages and vendored packages that are found before execution",
 	}
-	ignoreFlag = flag.StringFlag{
-		Name:  ignoreFlagName,
-		Usage: "packages to ignore (specified package and all its dependencies will be excluded from novendor)",
+	ignoreFlag	= flag.StringFlag{
+		Name:	ignoreFlagName,
+		Usage:	"packages to ignore (specified package and all its dependencies will be excluded from novendor)",
 	}
 )
 
@@ -93,8 +93,8 @@ func AmalgomatedMain() {
 }
 
 type pkgWithSrc struct {
-	pkg string
-	src string
+	pkg	string
+	src	string
 }
 
 func doNovendor(projectDir string, pkgPaths []string, groupPkgsByProject, fullPath, printPkgInfo bool, w io.Writer) error {
@@ -128,8 +128,8 @@ func doNovendor(projectDir string, pkgPaths []string, groupPkgsByProject, fullPa
 	pkgsToProcess := make([]pkgWithSrc, len(pkgPaths))
 	for i, pkgPath := range pkgPaths {
 		pkgsToProcess[i] = pkgWithSrc{
-			pkg: ".",
-			src: path.Join(projectDir, pkgPath),
+			pkg:	".",
+			src:	path.Join(projectDir, pkgPath),
 		}
 	}
 

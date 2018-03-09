@@ -125,8 +125,8 @@ func collapse(prev, next ast.Spec) bool {
 }
 
 type posSpan struct {
-	Start token.Pos
-	End   token.Pos
+	Start	token.Pos
+	End	token.Pos
 }
 
 func sortSpecs(fset *token.FileSet, f *ast.File, grp importGrouper, specs []ast.Spec) []ast.Spec {
@@ -179,8 +179,8 @@ func sortSpecs(fset *token.FileSet, f *ast.File, grp importGrouper, specs []ast.
 	// Reassign each comment to abut the end of its spec.
 	// Sort the comments by new position.
 	sort.Sort(byImportSpec{
-		specs: specs,
-		grp:   grp,
+		specs:	specs,
+		grp:	grp,
 	})
 
 	// Dedup. Thanks to our sorting, we can just consider
@@ -217,12 +217,12 @@ func sortSpecs(fset *token.FileSet, f *ast.File, grp importGrouper, specs []ast.
 }
 
 type byImportSpec struct {
-	specs []ast.Spec // slice of *ast.ImportSpec
-	grp   importGrouper
+	specs	[]ast.Spec	// slice of *ast.ImportSpec
+	grp	importGrouper
 }
 
-func (x byImportSpec) Len() int      { return len(x.specs) }
-func (x byImportSpec) Swap(i, j int) { x.specs[i], x.specs[j] = x.specs[j], x.specs[i] }
+func (x byImportSpec) Len() int		{ return len(x.specs) }
+func (x byImportSpec) Swap(i, j int)	{ x.specs[i], x.specs[j] = x.specs[j], x.specs[i] }
 func (x byImportSpec) Less(i, j int) bool {
 	ipath := importPath(x.specs[i])
 	jpath := importPath(x.specs[j])
@@ -247,6 +247,6 @@ func (x byImportSpec) Less(i, j int) bool {
 
 type byCommentPos []*ast.CommentGroup
 
-func (x byCommentPos) Len() int           { return len(x) }
-func (x byCommentPos) Swap(i, j int)      { x[i], x[j] = x[j], x[i] }
-func (x byCommentPos) Less(i, j int) bool { return x[i].Pos() < x[j].Pos() }
+func (x byCommentPos) Len() int			{ return len(x) }
+func (x byCommentPos) Swap(i, j int)		{ x[i], x[j] = x[j], x[i] }
+func (x byCommentPos) Less(i, j int) bool	{ return x[i].Pos() < x[j].Pos() }

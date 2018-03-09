@@ -8,8 +8,8 @@
 package amalgomated
 
 import (
-	"fmt"
 	"github.com/palantir/godel/apps/okgo/generated_src/internal/github.com/golang/lint/amalgomated_flag"
+	"fmt"
 	"go/build"
 	"io/ioutil"
 	"os"
@@ -20,9 +20,9 @@ import (
 )
 
 var (
-	minConfidence = flag.Float64("min_confidence", 0.8, "minimum confidence of a problem to print it")
-	setExitStatus = flag.Bool("set_exit_status", false, "set exit status to 1 if any issues are found")
-	suggestions   int
+	minConfidence	= flag.Float64("min_confidence", 0.8, "minimum confidence of a problem to print it")
+	setExitStatus	= flag.Bool("set_exit_status", false, "set exit status to 1 if any issues are found")
+	suggestions	int
 )
 
 func usage() {

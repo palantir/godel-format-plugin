@@ -22,8 +22,8 @@ package amalgomated
 
 import (
 	"bytes"
-	"fmt"
 	"github.com/palantir/godel/apps/gonform/generated_src/internal/github.com/palantir/checks/ptimports/amalgomated_flag"
+	"fmt"
 	"go/scanner"
 	"io"
 	"io/ioutil"
@@ -36,9 +36,9 @@ import (
 )
 
 var (
-	exitCode = 0
-	list     = flag.Bool("l", false, "list files whose formatting differs from ptimport's")
-	write    = flag.Bool("w", false, "Do not print reformatted sources to standard output. If a file's formatting is different from ptimports's, overwrite it with ptimports's version.")
+	exitCode	= 0
+	list		= flag.Bool("l", false, "list files whose formatting differs from ptimport's")
+	write		= flag.Bool("w", false, "Do not print reformatted sources to standard output. If a file's formatting is different from ptimports's, overwrite it with ptimports's version.")
 )
 
 func report(err error) {

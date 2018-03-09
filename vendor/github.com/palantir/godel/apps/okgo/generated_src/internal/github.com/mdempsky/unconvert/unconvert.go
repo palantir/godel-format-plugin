@@ -7,8 +7,8 @@ package amalgomated
 
 import (
 	"bytes"
-	"fmt"
 	"github.com/palantir/godel/apps/okgo/generated_src/internal/github.com/mdempsky/unconvert/amalgomated_flag"
+	"fmt"
 	"go/ast"
 	"go/build"
 	"go/format"
@@ -68,8 +68,8 @@ func apply(file string, edits editSet) {
 }
 
 type editor struct {
-	edits editSet
-	file  *token.File
+	edits	editSet
+	file	*token.File
 }
 
 func (e *editor) Visit(n ast.Node) ast.Visitor {
@@ -105,8 +105,8 @@ func (e *editor) rewrite(f *ast.Expr) {
 }
 
 var (
-	cr = []byte{'\r'}
-	nl = []byte{'\n'}
+	cr	= []byte{'\r'}
+	nl	= []byte{'\n'}
 )
 
 func print(conversions []token.Position) {
@@ -162,12 +162,12 @@ func rub(buf []byte) []byte {
 }
 
 var (
-	flagAll        = flag.Bool("all", false, "type check all GOOS and GOARCH combinations")
-	flagApply      = flag.Bool("apply", false, "apply edits to source files")
-	flagCPUProfile = flag.String("cpuprofile", "", "write CPU profile to file")
+	flagAll		= flag.Bool("all", false, "type check all GOOS and GOARCH combinations")
+	flagApply	= flag.Bool("apply", false, "apply edits to source files")
+	flagCPUProfile	= flag.String("cpuprofile", "", "write CPU profile to file")
 	// TODO(mdempsky): Better description and maybe flag name.
-	flagSafe = flag.Bool("safe", false, "be more conservative (experimental)")
-	flagV    = flag.Bool("v", false, "verbose output")
+	flagSafe	= flag.Bool("safe", false, "be more conservative (experimental)")
+	flagV		= flag.Bool("v", false, "verbose output")
 )
 
 func usage() {
@@ -310,8 +310,8 @@ func computeEdits(importPaths []string, os, arch string, cgoEnabled bool) fileTo
 	}
 
 	type res struct {
-		file  string
-		edits editSet
+		file	string
+		edits	editSet
 	}
 	ch := make(chan res)
 	var wg sync.WaitGroup
@@ -340,15 +340,15 @@ func computeEdits(importPaths []string, os, arch string, cgoEnabled bool) fileTo
 }
 
 type step struct {
-	n ast.Node
-	i int
+	n	ast.Node
+	i	int
 }
 
 type visitor struct {
-	pkg   *loader.PackageInfo
-	file  *token.File
-	edits editSet
-	path  []step
+	pkg	*loader.PackageInfo
+	file	*token.File
+	edits	editSet
+	path	[]step
 }
 
 func (v *visitor) Visit(node ast.Node) ast.Visitor {

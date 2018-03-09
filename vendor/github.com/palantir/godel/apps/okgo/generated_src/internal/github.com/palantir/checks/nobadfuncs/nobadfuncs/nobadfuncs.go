@@ -48,8 +48,8 @@ func PrintBadFuncRefs(pkgs []string, sigs map[string]string, stdout io.Writer) (
 
 func printFuncRefUsages(pkgs []string, sigs map[string]string, stdout io.Writer) (bool, error) {
 	loadcfg := loader.Config{
-		Build:      &build.Default,
-		ParserMode: parser.ParseComments,
+		Build:		&build.Default,
+		ParserMode:	parser.ParseComments,
 	}
 	// add all packages to load
 	for _, currPkg := range pkgs {
@@ -150,8 +150,8 @@ func visitInOrder(funcRefs map[string]map[token.Position]FuncRef, visitor func(t
 
 type posSlice []token.Position
 
-func (a posSlice) Len() int      { return len(a) }
-func (a posSlice) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
+func (a posSlice) Len() int		{ return len(a) }
+func (a posSlice) Swap(i, j int)	{ a[i], a[j] = a[j], a[i] }
 func (a posSlice) Less(i, j int) bool {
 	if a[i].Line != a[j].Line {
 		return a[i].Line < a[j].Line
@@ -224,6 +224,6 @@ func filePosFuncRefMap(uses map[*ast.Ident]types.Object, fset *token.FileSet, si
 
 type identSlice []*ast.Ident
 
-func (a identSlice) Len() int           { return len(a) }
-func (a identSlice) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a identSlice) Less(i, j int) bool { return a[i].Pos() < a[j].Pos() }
+func (a identSlice) Len() int		{ return len(a) }
+func (a identSlice) Swap(i, j int)	{ a[i], a[j] = a[j], a[i] }
+func (a identSlice) Less(i, j int) bool	{ return a[i].Pos() < a[j].Pos() }
