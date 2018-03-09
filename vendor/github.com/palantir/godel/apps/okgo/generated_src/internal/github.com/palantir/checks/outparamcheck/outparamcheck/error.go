@@ -14,10 +14,10 @@ import (
 )
 
 type OutParamError struct {
-	Pos      token.Position
-	Line     string
-	Method   string
-	Argument int
+	Pos		token.Position
+	Line		string
+	Method		string
+	Argument	int
 }
 
 func (err OutParamError) Error() string {

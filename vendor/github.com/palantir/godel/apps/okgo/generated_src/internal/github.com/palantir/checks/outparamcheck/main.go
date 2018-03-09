@@ -5,8 +5,8 @@
 package amalgomated
 
 import (
-	"fmt"
 	"github.com/palantir/godel/apps/okgo/generated_src/internal/github.com/palantir/checks/outparamcheck/amalgomated_flag"
+	"fmt"
 	"os"
 	"runtime"
 

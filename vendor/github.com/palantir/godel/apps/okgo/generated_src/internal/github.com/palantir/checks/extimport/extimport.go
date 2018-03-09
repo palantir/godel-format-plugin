@@ -34,25 +34,25 @@ import (
 )
 
 const (
-	pkgsFlagName = "pkgs"
-	listFlagName = "list"
-	allFlagName  = "all"
+	pkgsFlagName	= "pkgs"
+	listFlagName	= "list"
+	allFlagName	= "all"
 )
 
 var (
-	pkgsFlag = flag.StringSlice{
-		Name:  pkgsFlagName,
-		Usage: "paths to the packages to check",
+	pkgsFlag	= flag.StringSlice{
+		Name:	pkgsFlagName,
+		Usage:	"paths to the packages to check",
 	}
-	listFlag = flag.BoolFlag{
-		Name:  listFlagName,
-		Alias: "l",
-		Usage: "print external dependencies one per line",
+	listFlag	= flag.BoolFlag{
+		Name:	listFlagName,
+		Alias:	"l",
+		Usage:	"print external dependencies one per line",
 	}
-	allFlag = flag.BoolFlag{
-		Name:  allFlagName,
-		Alias: "a",
-		Usage: "list all external dependencies, including those multiple levels deep",
+	allFlag	= flag.BoolFlag{
+		Name:	allFlagName,
+		Alias:	"a",
+		Usage:	"list all external dependencies, including those multiple levels deep",
 	}
 )
 
@@ -104,16 +104,16 @@ func doExtimport(projectDir string, pkgPaths []string, list, all bool, w io.Writ
 	printedPkgs := make(map[string]bool)
 
 	type pkgWithSrc struct {
-		pkg string
-		src string
+		pkg	string
+		src	string
 	}
 
 	externalImportsExist := false
 	pkgsToProcess := make([]pkgWithSrc, len(pkgPaths))
 	for i, pkgPath := range pkgPaths {
 		pkgsToProcess[i] = pkgWithSrc{
-			pkg: "./.",
-			src: path.Join(projectDir, pkgPath),
+			pkg:	"./.",
+			src:	path.Join(projectDir, pkgPath),
 		}
 	}
 	processedPkgs := make(map[pkgWithSrc]bool)
@@ -138,8 +138,8 @@ func doExtimport(projectDir string, pkgPaths []string, list, all bool, w io.Writ
 			// external dependencies (even those multiple levels deep) are listed
 			for _, currExternalPkg := range externalPkgs {
 				externalPkgWithSrc := pkgWithSrc{
-					pkg: currExternalPkg,
-					src: currPkg.src,
+					pkg:	currExternalPkg,
+					src:	currPkg.src,
 				}
 				if !processedPkgs[externalPkgWithSrc] {
 					pkgsToProcess = append(pkgsToProcess, externalPkgWithSrc)
@@ -255,14 +255,14 @@ func addImportPosToMap(dst, src map[string][]token.Position) {
 }
 
 type importLine struct {
-	name string
-	pos  token.Position
+	name	string
+	pos	token.Position
 }
 
 type byLineNum []importLine
 
-func (a byLineNum) Len() int      { return len(a) }
-func (a byLineNum) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
+func (a byLineNum) Len() int		{ return len(a) }
+func (a byLineNum) Swap(i, j int)	{ a[i], a[j] = a[j], a[i] }
 func (a byLineNum) Less(i, j int) bool {
 	if a[i].pos.Line == a[j].pos.Line {
 		// if line numbers are the same, do secondary sort by column position
@@ -276,8 +276,8 @@ func fileToImportsMap(importPos map[string][]token.Position) ([]string, map[stri
 	for k, v := range importPos {
 		for _, currPos := range v {
 			output[currPos.Filename] = append(output[currPos.Filename], importLine{
-				name: k,
-				pos:  currPos,
+				name:	k,
+				pos:	currPos,
 			})
 		}
 	}

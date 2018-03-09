@@ -33,20 +33,20 @@ import (
 )
 
 const (
-	pkgsFlagName    = "pkgs"
-	verboseFlagName = "verbose"
+	pkgsFlagName	= "pkgs"
+	verboseFlagName	= "verbose"
 )
 
 var (
-	pkgsFlag = flag.StringSlice{
-		Name:     pkgsFlagName,
-		Usage:    "paths to the packages to check",
-		Optional: true,
+	pkgsFlag	= flag.StringSlice{
+		Name:		pkgsFlagName,
+		Usage:		"paths to the packages to check",
+		Optional:	true,
 	}
-	verboseFlag = flag.BoolFlag{
-		Name:  verboseFlagName,
-		Usage: "print verbose analysis of all imports that have multiple aliases",
-		Alias: "v",
+	verboseFlag	= flag.BoolFlag{
+		Name:	verboseFlagName,
+		Usage:	"print verbose analysis of all imports that have multiple aliases",
+		Alias:	"v",
 	}
 )
 

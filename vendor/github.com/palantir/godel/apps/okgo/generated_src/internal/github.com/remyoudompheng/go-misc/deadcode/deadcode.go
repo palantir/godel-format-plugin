@@ -1,8 +1,8 @@
 package amalgomated
 
 import (
-	"fmt"
 	"github.com/palantir/godel/apps/okgo/generated_src/internal/github.com/remyoudompheng/go-misc/deadcode/amalgomated_flag"
+	"fmt"
 	"go/ast"
 	"go/parser"
 	"go/token"
@@ -57,18 +57,18 @@ func doDir(name string) {
 }
 
 type Package struct {
-	p    *ast.Package
-	fs   *token.FileSet
-	decl map[string]ast.Node
-	used map[string]bool
+	p	*ast.Package
+	fs	*token.FileSet
+	decl	map[string]ast.Node
+	used	map[string]bool
 }
 
 func doPackage(fs *token.FileSet, pkg *ast.Package) {
 	p := &Package{
-		p:    pkg,
-		fs:   fs,
-		decl: make(map[string]ast.Node),
-		used: make(map[string]bool),
+		p:	pkg,
+		fs:	fs,
+		decl:	make(map[string]ast.Node),
+		used:	make(map[string]bool),
 	}
 	for _, file := range pkg.Files {
 		for _, decl := range file.Decls {
@@ -128,18 +128,18 @@ func doPackage(fs *token.FileSet, pkg *ast.Package) {
 }
 
 type Report struct {
-	pos  token.Pos
-	name string
+	pos	token.Pos
+	name	string
 }
 type Reports []Report
 
-func (l Reports) Len() int           { return len(l) }
-func (l Reports) Less(i, j int) bool { return l[i].pos < l[j].pos }
-func (l Reports) Swap(i, j int)      { l[i], l[j] = l[j], l[i] }
+func (l Reports) Len() int		{ return len(l) }
+func (l Reports) Less(i, j int) bool	{ return l[i].pos < l[j].pos }
+func (l Reports) Swap(i, j int)		{ l[i], l[j] = l[j], l[i] }
 
 // Visits files for used nodes.
 func (p *Package) Visit(node ast.Node) ast.Visitor {
-	u := usedWalker(*p) // hopefully p fields are references.
+	u := usedWalker(*p)	// hopefully p fields are references.
 	switch n := node.(type) {
 	// don't walk whole file, but only:
 	case *ast.ValueSpec:

@@ -34,7 +34,7 @@ func (s simplifier) Visit(node ast.Node) ast.Visitor {
 					x = t.Value
 					px = &t.Value
 				}
-				ast.Walk(s, x) // simplify x
+				ast.Walk(s, x)	// simplify x
 				// if the element is a composite literal and its literal type
 				// matches the outer literal's element type exactly, the inner
 				// literal type may be omitted
@@ -50,8 +50,8 @@ func (s simplifier) Visit(node ast.Node) ast.Visitor {
 					if addr, ok := x.(*ast.UnaryExpr); ok && addr.Op == token.AND {
 						if inner, ok := addr.X.(*ast.CompositeLit); ok {
 							if match(nil, reflect.ValueOf(ptr.X), reflect.ValueOf(inner.Type)) {
-								inner.Type = nil // drop T
-								*px = inner      // drop &
+								inner.Type = nil	// drop T
+								*px = inner		// drop &
 							}
 						}
 					}

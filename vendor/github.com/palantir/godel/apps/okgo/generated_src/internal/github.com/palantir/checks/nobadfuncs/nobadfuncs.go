@@ -30,25 +30,25 @@ import (
 )
 
 const (
-	printAllFlagName   = "all"
-	jsonConfigFlagName = "config"
-	pkgsFlagName       = "pkgs"
+	printAllFlagName	= "all"
+	jsonConfigFlagName	= "config"
+	pkgsFlagName		= "pkgs"
 )
 
 var (
-	printAllFlag = flag.BoolFlag{
-		Name:  printAllFlagName,
-		Usage: "print all function references",
+	printAllFlag	= flag.BoolFlag{
+		Name:	printAllFlagName,
+		Usage:	"print all function references",
 	}
-	jsonFlag = flag.StringFlag{
-		Name: jsonConfigFlagName,
+	jsonFlag	= flag.StringFlag{
+		Name:	jsonConfigFlagName,
 		Usage: "JSON configuration specifying blacklisted functions. Must be a JSON map from string to string, " +
 			"where the key is a function signature and the value is the failure message printed when a function" +
 			"with that signature is found.",
 	}
-	pkgsFlag = flag.StringSlice{
-		Name:  pkgsFlagName,
-		Usage: "paths to the packages to check",
+	pkgsFlag	= flag.StringSlice{
+		Name:	pkgsFlagName,
+		Usage:	"paths to the packages to check",
 	}
 )
 

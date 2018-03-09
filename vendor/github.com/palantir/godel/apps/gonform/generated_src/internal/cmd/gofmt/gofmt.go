@@ -6,8 +6,8 @@ package amalgomated
 
 import (
 	"bytes"
-	"fmt"
 	"github.com/palantir/godel/apps/gonform/generated_src/internal/cmd/gofmt/amalgomated_flag"
+	"fmt"
 	"go/ast"
 	"go/parser"
 	"go/printer"
@@ -24,27 +24,27 @@ import (
 
 var (
 	// main operation modes
-	list        = flag.Bool("l", false, "list files whose formatting differs from gofmt's")
-	write       = flag.Bool("w", false, "write result to (source) file instead of stdout")
-	rewriteRule = flag.String("r", "", "rewrite rule (e.g., 'a[b:len(a)] -> a[b:]')")
-	simplifyAST = flag.Bool("s", false, "simplify code")
-	doDiff      = flag.Bool("d", false, "display diffs instead of rewriting files")
-	allErrors   = flag.Bool("e", false, "report all errors (not just the first 10 on different lines)")
+	list		= flag.Bool("l", false, "list files whose formatting differs from gofmt's")
+	write		= flag.Bool("w", false, "write result to (source) file instead of stdout")
+	rewriteRule	= flag.String("r", "", "rewrite rule (e.g., 'a[b:len(a)] -> a[b:]')")
+	simplifyAST	= flag.Bool("s", false, "simplify code")
+	doDiff		= flag.Bool("d", false, "display diffs instead of rewriting files")
+	allErrors	= flag.Bool("e", false, "report all errors (not just the first 10 on different lines)")
 
 	// debugging
-	cpuprofile = flag.String("cpuprofile", "", "write cpu profile to this file")
+	cpuprofile	= flag.String("cpuprofile", "", "write cpu profile to this file")
 )
 
 const (
-	tabWidth    = 8
-	printerMode = printer.UseSpaces | printer.TabIndent
+	tabWidth	= 8
+	printerMode	= printer.UseSpaces | printer.TabIndent
 )
 
 var (
-	fileSet    = token.NewFileSet() // per process FileSet
-	exitCode   = 0
-	rewrite    func(*ast.File) *ast.File
-	parserMode parser.Mode
+	fileSet		= token.NewFileSet()	// per process FileSet
+	exitCode	= 0
+	rewrite		func(*ast.File) *ast.File
+	parserMode	parser.Mode
 )
 
 func report(err error) {

@@ -13,7 +13,7 @@ type Result int
 
 // Test result constants
 const (
-	PASS Result = iota
+	PASS	Result	= iota
 	FAIL
 	SKIP
 )
@@ -25,25 +25,25 @@ type Report struct {
 
 // Package contains the test results of a single package.
 type Package struct {
-	Name        string
-	Time        int
-	Tests       []*Test
-	CoveragePct string
+	Name		string
+	Time		int
+	Tests		[]*Test
+	CoveragePct	string
 }
 
 // Test contains the results of a single test.
 type Test struct {
-	Name   string
-	Time   int
-	Result Result
-	Output []string
+	Name	string
+	Time	int
+	Result	Result
+	Output	[]string
 }
 
 var (
-	regexStatus   = regexp.MustCompile(`^\s*--- (PASS|FAIL|SKIP): (.+) \((\d+\.\d+)(?: seconds|s)\)$`)
-	regexCoverage = regexp.MustCompile(`^coverage:\s+(\d+\.\d+)%\s+of\s+statements$`)
-	regexResult   = regexp.MustCompile(`^(ok|FAIL)\s+(.+)\s(\d+\.\d+)s(?:\s+coverage:\s+(\d+\.\d+)%\s+of\s+statements)?$`)
-	regexOutput   = regexp.MustCompile(`(    )*\t(.*)`)
+	regexStatus	= regexp.MustCompile(`^\s*--- (PASS|FAIL|SKIP): (.+) \((\d+\.\d+)(?: seconds|s)\)$`)
+	regexCoverage	= regexp.MustCompile(`^coverage:\s+(\d+\.\d+)%\s+of\s+statements$`)
+	regexResult	= regexp.MustCompile(`^(ok|FAIL)\s+(.+)\s(\d+\.\d+)s(?:\s+coverage:\s+(\d+\.\d+)%\s+of\s+statements)?$`)
+	regexOutput	= regexp.MustCompile(`(    )*\t(.*)`)
 )
 
 // Parse parses go test output from reader r and returns a report with the
@@ -81,9 +81,9 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 			// new test
 			cur = strings.TrimSpace(line[8:])
 			tests = append(tests, &Test{
-				Name:   cur,
-				Result: FAIL,
-				Output: make([]string, 0),
+				Name:	cur,
+				Result:	FAIL,
+				Output:	make([]string, 0),
 			})
 		} else if matches := regexResult.FindStringSubmatch(line); len(matches) == 5 {
 			if matches[4] != "" {
@@ -92,10 +92,10 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 
 			// all tests in this package are finished
 			report.Packages = append(report.Packages, Package{
-				Name:        matches[2],
-				Time:        parseTime(matches[3]),
-				Tests:       tests,
-				CoveragePct: coveragePct,
+				Name:		matches[2],
+				Time:		parseTime(matches[3]),
+				Tests:		tests,
+				CoveragePct:	coveragePct,
 			})
 
 			tests = make([]*Test, 0)
@@ -139,10 +139,10 @@ func Parse(r io.Reader, pkgName string) (*Report, error) {
 	if len(tests) > 0 {
 		// no result line found
 		report.Packages = append(report.Packages, Package{
-			Name:        pkgName,
-			Time:        testsTime,
-			Tests:       tests,
-			CoveragePct: coveragePct,
+			Name:		pkgName,
+			Time:		testsTime,
+			Tests:		tests,
+			CoveragePct:	coveragePct,
 		})
 	}
 

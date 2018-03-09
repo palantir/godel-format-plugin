@@ -33,16 +33,16 @@ type Linter struct {
 
 // Problem represents a problem in some source code.
 type Problem struct {
-	Position   token.Position // position in source file
-	Text       string         // the prose that describes the problem
-	Link       string         // (optional) the link to the style guide for the problem
-	Confidence float64        // a value in (0,1] estimating the confidence in this problem's correctness
-	LineText   string         // the source line
-	Category   string         // a short name for the general category of the problem
+	Position	token.Position	// position in source file
+	Text		string		// the prose that describes the problem
+	Link		string		// (optional) the link to the style guide for the problem
+	Confidence	float64		// a value in (0,1] estimating the confidence in this problem's correctness
+	LineText	string		// the source line
+	Category	string		// a short name for the general category of the problem
 
 	// If the problem has a suggested fix (the minority case),
 	// ReplacementLine is a full replacement for the relevant line of the source file.
-	ReplacementLine string
+	ReplacementLine	string
 }
 
 func (p *Problem) String() string {
@@ -54,8 +54,8 @@ func (p *Problem) String() string {
 
 type byPosition []Problem
 
-func (p byPosition) Len() int      { return len(p) }
-func (p byPosition) Swap(i, j int) { p[i], p[j] = p[j], p[i] }
+func (p byPosition) Len() int		{ return len(p) }
+func (p byPosition) Swap(i, j int)	{ p[i], p[j] = p[j], p[i] }
 
 func (p byPosition) Less(i, j int) bool {
 	pi, pj := p[i].Position, p[j].Position
@@ -85,8 +85,8 @@ func (l *Linter) LintFiles(files map[string][]byte) ([]Problem, error) {
 		return nil, nil
 	}
 	pkg := &pkg{
-		fset:  token.NewFileSet(),
-		files: make(map[string]*file),
+		fset:	token.NewFileSet(),
+		files:	make(map[string]*file),
 	}
 	var pkgName string
 	for filename, src := range files {
@@ -100,11 +100,11 @@ func (l *Linter) LintFiles(files map[string][]byte) ([]Problem, error) {
 			return nil, fmt.Errorf("%s is in package %s, not %s", filename, f.Name.Name, pkgName)
 		}
 		pkg.files[filename] = &file{
-			pkg:      pkg,
-			f:        f,
-			fset:     pkg.fset,
-			src:      src,
-			filename: filename,
+			pkg:		pkg,
+			f:		f,
+			fset:		pkg.fset,
+			src:		src,
+			filename:	filename,
 		}
 	}
 	return pkg.lint(), nil
@@ -112,18 +112,18 @@ func (l *Linter) LintFiles(files map[string][]byte) ([]Problem, error) {
 
 // pkg represents a package being linted.
 type pkg struct {
-	fset  *token.FileSet
-	files map[string]*file
+	fset	*token.FileSet
+	files	map[string]*file
 
-	typesPkg  *types.Package
-	typesInfo *types.Info
+	typesPkg	*types.Package
+	typesInfo	*types.Info
 
 	// sortable is the set of types in the package that implement sort.Interface.
-	sortable map[string]bool
+	sortable	map[string]bool
 	// main is whether this is a "main" package.
-	main bool
+	main	bool
 
-	problems []Problem
+	problems	[]Problem
 }
 
 func (p *pkg) lint() []Problem {
@@ -160,14 +160,14 @@ func (p *pkg) lint() []Problem {
 
 // file represents a file being linted.
 type file struct {
-	pkg      *pkg
-	f        *ast.File
-	fset     *token.FileSet
-	src      []byte
-	filename string
+	pkg		*pkg
+	f		*ast.File
+	fset		*token.FileSet
+	src		[]byte
+	filename	string
 }
 
-func (f *file) isTest() bool { return strings.HasSuffix(f.filename, "_test.go") }
+func (f *file) isTest() bool	{ return strings.HasSuffix(f.filename, "_test.go") }
 
 func (f *file) lint() {
 	f.lintPackageComment()
@@ -205,8 +205,8 @@ func (f *file) errorf(n ast.Node, confidence float64, args ...interface{}) *Prob
 
 func (p *pkg) errorfAt(pos token.Position, confidence float64, args ...interface{}) *Problem {
 	problem := Problem{
-		Position:   pos,
-		Confidence: confidence,
+		Position:	pos,
+		Confidence:	confidence,
 	}
 	if pos.Filename != "" {
 		// The file might not exist in our mapping if a //line directive was encountered.
@@ -216,7 +216,7 @@ func (p *pkg) errorfAt(pos token.Position, confidence float64, args ...interface
 	}
 
 argLoop:
-	for len(args) > 1 { // always leave at least the format string in args
+	for len(args) > 1 {	// always leave at least the format string in args
 		switch v := args[0].(type) {
 		case link:
 			problem.Link = string(v)
@@ -239,8 +239,8 @@ var gcImporter = gcimporter.Import
 // It also implements go/types.ImporterFrom, which was new in Go 1.6,
 // so vendoring will work.
 type importer struct {
-	impFn    func(packages map[string]*types.Package, path, srcDir string) (*types.Package, error)
-	packages map[string]*types.Package
+	impFn		func(packages map[string]*types.Package, path, srcDir string) (*types.Package, error)
+	packages	map[string]*types.Package
 }
 
 func (i importer) Import(path string) (*types.Package, error) {
@@ -252,17 +252,17 @@ func (i importer) Import(path string) (*types.Package, error) {
 func (p *pkg) typeCheck() error {
 	config := &types.Config{
 		// By setting a no-op error reporter, the type checker does as much work as possible.
-		Error: func(error) {},
+		Error:	func(error) {},
 		Importer: importer{
-			impFn:    gcImporter,
-			packages: make(map[string]*types.Package),
+			impFn:		gcImporter,
+			packages:	make(map[string]*types.Package),
 		},
 	}
 	info := &types.Info{
-		Types:  make(map[ast.Expr]types.TypeAndValue),
-		Defs:   make(map[*ast.Ident]types.Object),
-		Uses:   make(map[*ast.Ident]types.Object),
-		Scopes: make(map[ast.Node]*types.Scope),
+		Types:	make(map[ast.Expr]types.TypeAndValue),
+		Defs:	make(map[*ast.Ident]types.Object),
+		Uses:	make(map[*ast.Ident]types.Object),
+		Scopes:	make(map[ast.Node]*types.Scope),
 	}
 	var anyFile *file
 	var astFiles []*ast.File
@@ -319,7 +319,7 @@ func (p *pkg) scanSortable() {
 
 	// bitfield for which methods exist on each type.
 	const (
-		Len = 1 << iota
+		Len	= 1 << iota
 		Less
 		Swap
 	)
@@ -393,10 +393,10 @@ func (f *file) lintPackageComment() {
 			// the start of the blank lines between the doc and the package statement
 			// is at least pointing at the location of the problem.
 			pos := token.Position{
-				Filename: endPos.Filename,
+				Filename:	endPos.Filename,
 				// Offset not set; it is non-trivial, and doesn't appear to be needed.
-				Line:   endPos.Line + 1,
-				Column: 1,
+				Line:	endPos.Line + 1,
+				Column:	1,
 			}
 			f.pkg.errorfAt(pos, 0.9, link(ref), category("comments"), "package comment is detached; there should be no blank lines between it and the package statement")
 			return
@@ -432,13 +432,13 @@ func (f *file) lintBlankImports() {
 		pos := f.fset.Position(imp.Pos())
 
 		if !isBlank(imp.Name) {
-			continue // Ignore non-blank imports.
+			continue	// Ignore non-blank imports.
 		}
 		if i > 0 {
 			prev := f.f.Imports[i-1]
 			prevPos := f.fset.Position(prev.Pos())
 			if isBlank(prev.Name) && prevPos.Line+1 == pos.Line {
-				continue // A subsequent blank in a group.
+				continue	// A subsequent blank in a group.
 			}
 		}
 
@@ -478,7 +478,7 @@ func (f *file) lintExported() {
 		return
 	}
 
-	var lastGen *ast.GenDecl // last GenDecl entered.
+	var lastGen *ast.GenDecl	// last GenDecl entered.
 
 	// Set of GenDecls that have already had missing comments flagged.
 	genDeclMissingComments := make(map[*ast.GenDecl]bool)
@@ -525,8 +525,8 @@ var allCapsRE = regexp.MustCompile(`^[A-Z0-9_]+$`)
 // This is usually because they are constrained by having to match names in the
 // standard library.
 var knownNameExceptions = map[string]bool{
-	"LastInsertId": true, // must match database/sql
-	"kWh":          true,
+	"LastInsertId":	true,	// must match database/sql
+	"kWh":		true,
 }
 
 // lintNames examines all names in the file.
@@ -628,7 +628,7 @@ func (f *file) lintNames() {
 			// They are often constrainted by the method names of concrete types.
 			for _, x := range v.Methods.List {
 				ft, ok := x.Type.(*ast.FuncType)
-				if !ok { // might be an embedded interface name
+				if !ok {	// might be an embedded interface name
 					continue
 				}
 				checkList(ft.Params, "interface method parameter")
@@ -675,9 +675,9 @@ func lintName(name string) (should string) {
 	// Split camelCase at any lower->upper transition, and split on underscores.
 	// Check each word for common initialisms.
 	runes := []rune(name)
-	w, i := 0, 0 // index of start of word, scan
+	w, i := 0, 0	// index of start of word, scan
 	for i+1 <= len(runes) {
-		eow := false // whether we hit the end of a word
+		eow := false	// whether we hit the end of a word
 		if i+1 == len(runes) {
 			eow = true
 		} else if runes[i+1] == '_' {
@@ -727,42 +727,42 @@ func lintName(name string) (should string) {
 // Only add entries that are highly unlikely to be non-initialisms.
 // For instance, "ID" is fine (Freudian code is rare), but "AND" is not.
 var commonInitialisms = map[string]bool{
-	"API":   true,
-	"ASCII": true,
-	"CPU":   true,
-	"CSS":   true,
-	"DNS":   true,
-	"EOF":   true,
-	"GUID":  true,
-	"HTML":  true,
-	"HTTP":  true,
-	"HTTPS": true,
-	"ID":    true,
-	"IP":    true,
-	"JSON":  true,
-	"LHS":   true,
-	"QPS":   true,
-	"RAM":   true,
-	"RHS":   true,
-	"RPC":   true,
-	"SLA":   true,
-	"SMTP":  true,
-	"SQL":   true,
-	"SSH":   true,
-	"TCP":   true,
-	"TLS":   true,
-	"TTL":   true,
-	"UDP":   true,
-	"UI":    true,
-	"UID":   true,
-	"UUID":  true,
-	"URI":   true,
-	"URL":   true,
-	"UTF8":  true,
-	"VM":    true,
-	"XML":   true,
-	"XSRF":  true,
-	"XSS":   true,
+	"API":		true,
+	"ASCII":	true,
+	"CPU":		true,
+	"CSS":		true,
+	"DNS":		true,
+	"EOF":		true,
+	"GUID":		true,
+	"HTML":		true,
+	"HTTP":		true,
+	"HTTPS":	true,
+	"ID":		true,
+	"IP":		true,
+	"JSON":		true,
+	"LHS":		true,
+	"QPS":		true,
+	"RAM":		true,
+	"RHS":		true,
+	"RPC":		true,
+	"SLA":		true,
+	"SMTP":		true,
+	"SQL":		true,
+	"SSH":		true,
+	"TCP":		true,
+	"TLS":		true,
+	"TTL":		true,
+	"UDP":		true,
+	"UI":		true,
+	"UID":		true,
+	"UUID":		true,
+	"URI":		true,
+	"URL":		true,
+	"UTF8":		true,
+	"VM":		true,
+	"XML":		true,
+	"XSRF":		true,
+	"XSS":		true,
 }
 
 // lintTypeDoc examines the doc comment on a type.
@@ -791,11 +791,11 @@ func (f *file) lintTypeDoc(t *ast.TypeSpec, doc *ast.CommentGroup) {
 }
 
 var commonMethods = map[string]bool{
-	"Error":     true,
-	"Read":      true,
-	"ServeHTTP": true,
-	"String":    true,
-	"Write":     true,
+	"Error":	true,
+	"Read":		true,
+	"ServeHTTP":	true,
+	"String":	true,
+	"Write":	true,
 }
 
 // lintFuncDoc examines doc comments on functions and methods.
@@ -919,18 +919,18 @@ func (f *file) checkStutter(id *ast.Ident, thing string) {
 // zeroLiteral is a set of ast.BasicLit values that are zero values.
 // It is not exhaustive.
 var zeroLiteral = map[string]bool{
-	"false": true, // bool
+	"false":	true,	// bool
 	// runes
-	`'\x00'`: true,
-	`'\000'`: true,
+	`'\x00'`:	true,
+	`'\000'`:	true,
 	// strings
-	`""`: true,
-	"``": true,
+	`""`:	true,
+	"``":	true,
 	// numerics
-	"0":   true,
-	"0.":  true,
-	"0.0": true,
-	"0i":  true,
+	"0":	true,
+	"0.":	true,
+	"0.0":	true,
+	"0i":	true,
 }
 
 // knownWeakerTypes is a set of types that are commonly used to weaken var declarations.
@@ -940,15 +940,15 @@ var zeroLiteral = map[string]bool{
 // A canonical example is `var out io.Writer = os.Stdout`.
 // This is only used when type checking fails to determine the exact types.
 var knownWeakerTypes = map[string]bool{
-	"io.Reader":     true,
-	"io.Writer":     true,
-	"proto.Message": true,
+	"io.Reader":		true,
+	"io.Writer":		true,
+	"proto.Message":	true,
 }
 
 // lintVarDecls examines variable declarations. It complains about declarations with
 // redundant LHS types that can be inferred from the RHS.
 func (f *file) lintVarDecls() {
-	var lastGen *ast.GenDecl // last GenDecl entered.
+	var lastGen *ast.GenDecl	// last GenDecl entered.
 
 	f.walk(func(node ast.Node) bool {
 		switch v := node.(type) {
@@ -1044,7 +1044,7 @@ func (f *file) lintElses() {
 		if len(ifStmt.Body.List) == 0 {
 			return true
 		}
-		shortDecl := false // does the if statement have a ":=" initialization statement?
+		shortDecl := false	// does the if statement have a ":=" initialization statement?
 		if ifStmt.Init != nil {
 			if as, ok := ifStmt.Init.(*ast.AssignStmt); ok && as.Tok == token.DEFINE {
 				shortDecl = true
@@ -1071,7 +1071,7 @@ func (f *file) lintRanges() {
 		}
 		if rs.Value == nil {
 			// for x = range m { ... }
-			return true // single var form
+			return true	// single var form
 		}
 		if !isIdent(rs.Value, "_") {
 			// for ?, y = range m { ... }
@@ -1080,7 +1080,7 @@ func (f *file) lintRanges() {
 
 		p := f.errorf(rs.Value, 1, category("range-loop"), "should omit 2nd value from range; this loop is equivalent to `for %s %s range ...`", f.render(rs.Key), rs.Tok)
 
-		newRS := *rs // shallow copy
+		newRS := *rs	// shallow copy
 		newRS.Value = nil
 		p.ReplacementLine = f.firstLineOf(&newRS, rs)
 
@@ -1189,7 +1189,7 @@ func (f *file) lintErrorStrings() {
 		if !ok || str.Kind != token.STRING {
 			return true
 		}
-		s, _ := strconv.Unquote(str.Value) // can assume well-formed Go
+		s, _ := strconv.Unquote(str.Value)	// can assume well-formed Go
 		if s == "" {
 			return true
 		}
@@ -1217,9 +1217,9 @@ func (f *file) lintErrorStrings() {
 }
 
 var badReceiverNames = map[string]bool{
-	"me":   true,
-	"this": true,
-	"self": true,
+	"me":	true,
+	"this":	true,
+	"self":	true,
 }
 
 // lintReceiverNames examines receiver names. It complains about inconsistent
@@ -1329,7 +1329,7 @@ func (f *file) lintErrorReturn() {
 		for _, r := range ret[:len(ret)-1] {
 			if isIdent(r.Type, "error") {
 				f.errorf(fn, 0.9, category("arg-order"), "error should be the last type when returning multiple items")
-				break // only flag one
+				break	// only flag one
 			}
 		}
 		return true
@@ -1367,7 +1367,7 @@ func (f *file) lintUnexportedReturn() {
 			f.errorf(ret.Type, 0.8, category("unexported-type-in-api"),
 				"exported %s %s returns unexported type %s, which can be annoying to use",
 				thing, fn.Name.Name, typ)
-			break // only flag one
+			break	// only flag one
 		}
 		return false
 	})
@@ -1385,7 +1385,7 @@ func exportedType(typ types.Type) bool {
 		return exportedType(T.Key()) && exportedType(T.Elem())
 	case interface {
 		Elem() types.Type
-	}: // array, slice, pointer, chan
+	}:	// array, slice, pointer, chan
 		return exportedType(T.Elem())
 	}
 	// Be conservative about other types, such as struct, interface, etc.
@@ -1483,7 +1483,7 @@ func isIdent(expr ast.Expr, ident string) bool {
 
 // isBlank returns whether id is the blank identifier "_".
 // If id == nil, the answer is false.
-func isBlank(id *ast.Ident) bool { return id != nil && id.Name == "_" }
+func isBlank(id *ast.Ident) bool	{ return id != nil && id.Name == "_" }
 
 func isPkgDot(expr ast.Expr, pkg, name string) bool {
 	sel, ok := expr.(*ast.SelectorExpr)
@@ -1501,12 +1501,12 @@ func isOne(expr ast.Expr) bool {
 }
 
 var basicTypeKinds = map[types.BasicKind]string{
-	types.UntypedBool:    "bool",
-	types.UntypedInt:     "int",
-	types.UntypedRune:    "rune",
-	types.UntypedFloat:   "float64",
-	types.UntypedComplex: "complex128",
-	types.UntypedString:  "string",
+	types.UntypedBool:	"bool",
+	types.UntypedInt:	"int",
+	types.UntypedRune:	"rune",
+	types.UntypedFloat:	"float64",
+	types.UntypedComplex:	"complex128",
+	types.UntypedString:	"string",
 }
 
 // isUntypedConst reports whether expr is an untyped constant,
@@ -1548,7 +1548,7 @@ func (f *file) indentOf(node ast.Node) string {
 			return line[:i]
 		}
 	}
-	return line // unusual or empty line
+	return line	// unusual or empty line
 }
 
 func (f *file) srcLineWithMatch(node ast.Node, pattern string) (m []string) {

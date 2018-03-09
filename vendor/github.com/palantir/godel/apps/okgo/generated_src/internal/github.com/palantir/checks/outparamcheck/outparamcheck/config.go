@@ -9,8 +9,8 @@ type Config map[string][]int
 
 var defaultCfg = Config(
 	map[string][]int{
-		"encoding/json.Unmarshal":     {1},
-		"encoding/safejson.Unmarshal": {1},
-		"gopkg.in/yaml.v2.Unmarshal":  {1},
+		"encoding/json.Unmarshal":	{1},
+		"encoding/safejson.Unmarshal":	{1},
+		"gopkg.in/yaml.v2.Unmarshal":	{1},
 	},
 )
