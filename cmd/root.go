@@ -16,9 +16,7 @@ package cmd
 
 import (
 	"io/ioutil"
-	"path"
 
-	"github.com/palantir/godel/framework/godellauncher"
 	"github.com/palantir/godel/framework/pluginapi"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -43,35 +41,6 @@ var (
 var RootCmd = &cobra.Command{
 	Use:   "format-plugin [flags] [files]",
 	Short: "Format specified files (if no files are specified, format all project Go files)",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		var formatCfg formatplugin.Config
-		if formatConfigFileFlagVal != "" {
-			cfgVal, err := readFormatConfigFromFile(formatConfigFileFlagVal)
-			if err != nil {
-				return err
-			}
-			formatCfg = cfgVal
-		}
-
-		if godelConfigFileFlagVal != "" {
-			cfgVal, err := godellauncher.ReadGodelConfig(path.Dir(godelConfigFileFlagVal))
-			if err != nil {
-				return err
-			}
-			formatCfg.Exclude.Add(cfgVal.Exclude)
-		}
-
-		param, err := formatCfg.ToParam(cliFormatterFactory)
-		if err != nil {
-			return err
-		}
-
-		// no formatters specified
-		if len(assetsFlagVal) == 0 {
-			return nil
-		}
-		return formatplugin.Run(param, projectDirFlagVal, verifyFlagVal, args, cmd.OutOrStdout())
-	},
 }
 
 func init() {
@@ -83,14 +52,13 @@ func init() {
 	if err := RootCmd.MarkPersistentFlagRequired(pluginapi.ProjectDirFlagName); err != nil {
 		panic(err)
 	}
-	RootCmd.PersistentFlags().BoolVar(&verifyFlagVal, "verify", false, "verify files match formatting without applying formatting")
 
 	RootCmd.PersistentPreRunE = func(cmd *cobra.Command, args []string) error {
-		assetFormatters, err := formatter.AssetFormatterCreators(assetsFlagVal...)
+		assetFormatters, assetConfigUpgraders, err := formatter.AssetFormatterCreators(assetsFlagVal...)
 		if err != nil {
 			return err
 		}
-		cliFormatterFactory, err = formatter.NewFormatterFactory(assetFormatters...)
+		cliFormatterFactory, err = formatter.NewFormatterFactory(assetFormatters, assetConfigUpgraders)
 		if err != nil {
 			return err
 		}
@@ -103,8 +71,14 @@ func readFormatConfigFromFile(cfgFile string) (formatplugin.Config, error) {
 	if err != nil {
 		return formatplugin.Config{}, errors.Wrapf(err, "failed to read config file")
 	}
+
+	upgradedCfg, err := upgradeConfig(bytes)
+	if err != nil {
+		return formatplugin.Config{}, err
+	}
+
 	var formatCfg formatplugin.Config
-	if err := yaml.Unmarshal(bytes, &formatCfg); err != nil {
+	if err := yaml.Unmarshal(upgradedCfg, &formatCfg); err != nil {
 		return formatplugin.Config{}, errors.Wrapf(err, "failed to unmarshal YAML")
 	}
 	return formatCfg, nil
