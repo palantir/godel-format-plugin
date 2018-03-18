@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package formatplugin
 
 import (
 	"bytes"
@@ -29,7 +29,7 @@ import (
 	"github.com/palantir/godel-format-plugin/formatter"
 )
 
-func runFormat(formatters []formatter.Formatter, projectDir string, exclude matcher.Matcher, verify bool, providedFiles []string, stdout io.Writer) error {
+func Run(formatters []formatter.Formatter, projectDir string, exclude matcher.Matcher, verify bool, providedFiles []string, stdout io.Writer) error {
 	var files []string
 	if len(providedFiles) == 0 {
 		matchingFiles, err := allMatchingFilesInDir(projectDir, exclude)
