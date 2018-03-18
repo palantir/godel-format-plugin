@@ -12,35 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package formatplugin
 
 import (
-	"io/ioutil"
-
-	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
 )
 
-func readFormatConfigFromFile(cfg string) (formatConfig, error) {
-	bytes, err := ioutil.ReadFile(cfg)
-	if err != nil {
-		return formatConfig{}, errors.Wrapf(err, "failed to read config file")
-	}
-	return readFormatConfig(bytes)
+type Config struct {
+	Formatters map[string]FormatterConfig `yaml:"formatters"`
 }
 
-func readFormatConfig(cfg []byte) (formatConfig, error) {
-	var formatCfg formatConfig
-	if err := yaml.Unmarshal(cfg, &formatCfg); err != nil {
-		return formatConfig{}, errors.Wrapf(err, "failed to unmarshal YAML")
-	}
-	return formatCfg, nil
-}
-
-type formatConfig struct {
-	Formatters map[string]formatterConfig `yaml:"formatters"`
-}
-
-type formatterConfig struct {
+type FormatterConfig struct {
 	Config *yaml.MapSlice `yaml:"config"`
 }

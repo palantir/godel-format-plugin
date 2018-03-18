@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package cmd
 
 import (
+	"io/ioutil"
 	"path"
 
 	"github.com/palantir/godel/framework/godellauncher"
@@ -24,11 +25,13 @@ import (
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"
 
+	"github.com/palantir/godel-format-plugin/formatplugin"
 	"github.com/palantir/godel-format-plugin/formatter"
 )
 
 var (
-	debugFlagVal            bool
+	DebugFlagVal bool
+
 	projectDirFlagVal       string
 	godelConfigFileFlagVal  string
 	formatConfigFileFlagVal string
@@ -38,7 +41,7 @@ var (
 	cliFormatterFactory formatter.Factory
 )
 
-var rootCmd = &cobra.Command{
+var RootCmd = &cobra.Command{
 	Use:   "format-plugin [flags] [files]",
 	Short: "Format specified files (if no files are specified, format all project Go files)",
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -80,22 +83,22 @@ var rootCmd = &cobra.Command{
 		if len(assetsFlagVal) == 0 {
 			return nil
 		}
-		return runFormat(formatters, projectDirFlagVal, exclude, verifyFlagVal, args, cmd.OutOrStdout())
+		return formatplugin.Run(formatters, projectDirFlagVal, exclude, verifyFlagVal, args, cmd.OutOrStdout())
 	},
 }
 
 func init() {
-	pluginapi.AddDebugPFlagPtr(rootCmd.PersistentFlags(), &debugFlagVal)
-	pluginapi.AddGodelConfigPFlagPtr(rootCmd.PersistentFlags(), &godelConfigFileFlagVal)
-	pluginapi.AddConfigPFlagPtr(rootCmd.PersistentFlags(), &formatConfigFileFlagVal)
-	pluginapi.AddProjectDirPFlagPtr(rootCmd.PersistentFlags(), &projectDirFlagVal)
-	pluginapi.AddAssetsPFlagPtr(rootCmd.PersistentFlags(), &assetsFlagVal)
-	if err := rootCmd.MarkPersistentFlagRequired(pluginapi.ProjectDirFlagName); err != nil {
+	pluginapi.AddDebugPFlagPtr(RootCmd.PersistentFlags(), &DebugFlagVal)
+	pluginapi.AddGodelConfigPFlagPtr(RootCmd.PersistentFlags(), &godelConfigFileFlagVal)
+	pluginapi.AddConfigPFlagPtr(RootCmd.PersistentFlags(), &formatConfigFileFlagVal)
+	pluginapi.AddProjectDirPFlagPtr(RootCmd.PersistentFlags(), &projectDirFlagVal)
+	pluginapi.AddAssetsPFlagPtr(RootCmd.PersistentFlags(), &assetsFlagVal)
+	if err := RootCmd.MarkPersistentFlagRequired(pluginapi.ProjectDirFlagName); err != nil {
 		panic(err)
 	}
-	rootCmd.PersistentFlags().BoolVar(&verifyFlagVal, "verify", false, "verify files match formatting without applying formatting")
+	RootCmd.PersistentFlags().BoolVar(&verifyFlagVal, "verify", false, "verify files match formatting without applying formatting")
 
-	rootCmd.PersistentPreRunE = func(cmd *cobra.Command, args []string) error {
+	RootCmd.PersistentPreRunE = func(cmd *cobra.Command, args []string) error {
 		assetFormatters, err := formatter.AssetFormatterCreators(assetsFlagVal...)
 		if err != nil {
 			return err
@@ -106,4 +109,16 @@ func init() {
 		}
 		return nil
 	}
+}
+
+func readFormatConfigFromFile(cfgFile string) (formatplugin.Config, error) {
+	bytes, err := ioutil.ReadFile(cfgFile)
+	if err != nil {
+		return formatplugin.Config{}, errors.Wrapf(err, "failed to read config file")
+	}
+	var formatCfg formatplugin.Config
+	if err := yaml.Unmarshal(bytes, &formatCfg); err != nil {
+		return formatplugin.Config{}, errors.Wrapf(err, "failed to unmarshal YAML")
+	}
+	return formatCfg, nil
 }

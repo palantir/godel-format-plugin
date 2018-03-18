@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package formatplugin_test
 
 import (
 	"testing"
@@ -20,6 +20,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v2"
+
+	"github.com/palantir/godel-format-plugin/formatplugin"
 )
 
 func TestReadConfig(t *testing.T) {
@@ -29,11 +31,13 @@ formatters:
     config:
       no-simplify: true
 `
-	got, err := readFormatConfig([]byte(in))
+
+	var got formatplugin.Config
+	err := yaml.Unmarshal([]byte(in), &got)
 	require.NoError(t, err)
 
-	assert.Equal(t, formatConfig{
-		Formatters: map[string]formatterConfig{
+	assert.Equal(t, formatplugin.Config{
+		Formatters: map[string]formatplugin.FormatterConfig{
 			"ptimports": {
 				Config: &yaml.MapSlice{
 					yaml.MapItem{

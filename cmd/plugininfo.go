@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package cmd
 
 import (
 	"github.com/palantir/godel/framework/pluginapi"
@@ -20,7 +20,7 @@ import (
 	"github.com/palantir/pkg/cobracli"
 )
 
-var pluginInfo = pluginapi.MustNewInfo(
+var PluginInfo = pluginapi.MustNewInfo(
 	"com.palantir.godel",
 	"format-plugin",
 	cobracli.Version,
