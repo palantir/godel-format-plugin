@@ -25,14 +25,12 @@ import (
 
 	"github.com/palantir/pkg/matcher"
 	"github.com/pkg/errors"
-
-	"github.com/palantir/godel-format-plugin/formatter"
 )
 
-func Run(formatters []formatter.Formatter, projectDir string, exclude matcher.Matcher, verify bool, providedFiles []string, stdout io.Writer) error {
+func Run(param Param, projectDir string, verify bool, providedFiles []string, stdout io.Writer) error {
 	var files []string
 	if len(providedFiles) == 0 {
-		matchingFiles, err := allMatchingFilesInDir(projectDir, exclude)
+		matchingFiles, err := allMatchingFilesInDir(projectDir, param.Exclude)
 		if err != nil {
 			return err
 		}
@@ -44,7 +42,7 @@ func Run(formatters []formatter.Formatter, projectDir string, exclude matcher.Ma
 		if err != nil {
 			return errors.Wrapf(err, "failed to determine working directory")
 		}
-		filteredFiles, err := filterFiles(projectDir, wd, providedFiles, exclude)
+		filteredFiles, err := filterFiles(projectDir, wd, providedFiles, param.Exclude)
 		if err != nil {
 			return err
 		}
@@ -57,7 +55,7 @@ func Run(formatters []formatter.Formatter, projectDir string, exclude matcher.Ma
 	}
 
 	var outputBuf bytes.Buffer
-	for _, currFormatter := range formatters {
+	for _, currFormatter := range param.Formatters {
 		formatterOutput := stdout
 		// if in "verify" mode, collect output in buffer rather than streaming to output
 		if verify {
