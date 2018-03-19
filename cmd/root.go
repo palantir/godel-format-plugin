@@ -20,7 +20,6 @@ import (
 
 	"github.com/palantir/godel/framework/godellauncher"
 	"github.com/palantir/godel/framework/pluginapi"
-	"github.com/palantir/pkg/matcher"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"
@@ -45,45 +44,33 @@ var RootCmd = &cobra.Command{
 	Use:   "format-plugin [flags] [files]",
 	Short: "Format specified files (if no files are specified, format all project Go files)",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		var exclude matcher.Matcher
-		if godelConfigFileFlagVal != "" {
-			cfg, err := godellauncher.ReadGodelConfig(path.Dir(godelConfigFileFlagVal))
+		var formatCfg formatplugin.Config
+		if formatConfigFileFlagVal != "" {
+			cfgVal, err := readFormatConfigFromFile(formatConfigFileFlagVal)
 			if err != nil {
 				return err
 			}
-			exclude = cfg.Exclude.Matcher()
+			formatCfg = cfgVal
 		}
 
-		var formatters []formatter.Formatter
-		if formatConfigFileFlagVal != "" {
-			cfg, err := readFormatConfigFromFile(formatConfigFileFlagVal)
+		if godelConfigFileFlagVal != "" {
+			cfgVal, err := godellauncher.ReadGodelConfig(path.Dir(godelConfigFileFlagVal))
 			if err != nil {
 				return err
 			}
-			for _, currType := range cliFormatterFactory.FormatterTypes() {
-				currCfg := cfg.Formatters[currType]
+			formatCfg.Exclude.Add(cfgVal.Exclude)
+		}
 
-				var cfgBytes []byte
-				if currCfg.Config != nil {
-					bytes, err := yaml.Marshal(currCfg.Config)
-					if err != nil {
-						return errors.Wrapf(err, "failed to marshal configuration YAML for formatter %s", currType)
-					}
-					cfgBytes = bytes
-				}
-				formatter, err := cliFormatterFactory.NewFormatter(currType, cfgBytes)
-				if err != nil {
-					return err
-				}
-				formatters = append(formatters, formatter)
-			}
+		param, err := formatCfg.ToParam(cliFormatterFactory)
+		if err != nil {
+			return err
 		}
 
 		// no formatters specified
 		if len(assetsFlagVal) == 0 {
 			return nil
 		}
-		return formatplugin.Run(formatters, projectDirFlagVal, exclude, verifyFlagVal, args, cmd.OutOrStdout())
+		return formatplugin.Run(param, projectDirFlagVal, verifyFlagVal, args, cmd.OutOrStdout())
 	},
 }
 

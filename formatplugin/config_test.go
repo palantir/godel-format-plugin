@@ -17,6 +17,7 @@ package formatplugin_test
 import (
 	"testing"
 
+	"github.com/palantir/pkg/matcher"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v2"
@@ -30,6 +31,9 @@ formatters:
   ptimports:
     config:
       no-simplify: true
+exclude:
+  names:
+    - "*.pb.go"
 `
 
 	var got formatplugin.Config
@@ -45,6 +49,11 @@ formatters:
 						Value: true,
 					},
 				},
+			},
+		},
+		Exclude: matcher.NamesPathsCfg{
+			Names: []string{
+				"*.pb.go",
 			},
 		},
 	}, got)
