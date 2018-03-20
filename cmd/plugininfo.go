@@ -20,24 +20,28 @@ import (
 	"github.com/palantir/pkg/cobracli"
 )
 
-var PluginInfo = pluginapi.MustNewInfo(
-	"com.palantir.godel",
+var PluginInfo = pluginapi.MustNewPluginInfo(
+	"com.palantir.godel-format-plugin",
 	"format-plugin",
 	cobracli.Version,
-	"format.yml",
-	pluginapi.MustNewTaskInfo(
+	pluginapi.PluginInfoUsesConfigFile(),
+	pluginapi.PluginInfoGlobalFlagOptions(
+		pluginapi.GlobalFlagOptionsParamDebugFlag("--"+pluginapi.DebugFlagName),
+		pluginapi.GlobalFlagOptionsParamProjectDirFlag("--"+pluginapi.ProjectDirFlagName),
+		pluginapi.GlobalFlagOptionsParamGodelConfigFlag("--"+pluginapi.GodelConfigFlagName),
+		pluginapi.GlobalFlagOptionsParamConfigFlag("--"+pluginapi.ConfigFlagName),
+	),
+	pluginapi.PluginInfoTaskInfo(
 		"format",
 		"Format files",
-		pluginapi.TaskInfoGlobalFlagOptions(pluginapi.NewGlobalFlagOptions(
-			pluginapi.GlobalFlagOptionsParamDebugFlag("--"+pluginapi.DebugFlagName),
-			pluginapi.GlobalFlagOptionsParamProjectDirFlag("--"+pluginapi.ProjectDirFlagName),
-			pluginapi.GlobalFlagOptionsParamGodelConfigFlag("--"+pluginapi.GodelConfigFlagName),
-			pluginapi.GlobalFlagOptionsParamConfigFlag("--"+pluginapi.ConfigFlagName),
-		)),
+		pluginapi.TaskInfoCommand("run"),
 		pluginapi.TaskInfoVerifyOptions(pluginapi.NewVerifyOptions(
 			pluginapi.VerifyOptionsApplyFalseArgs("--verify"),
 			pluginapi.VerifyOptionsOrdering(intPtr(verifyorder.Format)),
 		)),
+	),
+	pluginapi.PluginInfoUpgradeConfigTaskInfo(
+		pluginapi.UpgradeConfigTaskInfoCommand("upgrade-config"),
 	),
 )
 

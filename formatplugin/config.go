@@ -59,17 +59,15 @@ func (cfg *Config) ToParam(factory formatter.Factory) (Param, error) {
 
 	var formatters []formatter.Formatter
 	for _, formatterName := range factory.FormatterTypes() {
-		formatterCfg, ok := cfg.Formatters[formatterName]
-		if !ok {
-			continue
-		}
 		var cfgBytes []byte
-		if cfgMapSlice := formatterCfg.Config; cfgMapSlice != nil {
-			outBytes, err := yaml.Marshal(*cfgMapSlice)
-			if err != nil {
-				return Param{}, errors.Wrapf(err, "failed to marshal configuration for %s", formatterName)
+		if formatterCfg, ok := cfg.Formatters[formatterName]; ok {
+			if cfgMapSlice := formatterCfg.Config; cfgMapSlice != nil {
+				outBytes, err := yaml.Marshal(*cfgMapSlice)
+				if err != nil {
+					return Param{}, errors.Wrapf(err, "failed to marshal configuration for %s", formatterName)
+				}
+				cfgBytes = outBytes
 			}
-			cfgBytes = outBytes
 		}
 		formatter, err := factory.NewFormatter(formatterName, cfgBytes)
 		if err != nil {
