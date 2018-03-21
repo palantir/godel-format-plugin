@@ -23,34 +23,40 @@ import (
 	"gopkg.in/yaml.v2"
 
 	"github.com/palantir/godel-format-plugin/formatplugin"
+	"github.com/palantir/godel-format-plugin/formatplugin/config/internal/v0"
 )
 
-type legacyConfigStruct struct {
+type Config struct {
 	Legacy bool `yaml:"legacy-config"`
 
 	// Formatters specifies the configuration used by the formatters. The key is the name of the formatter and the
 	// value is the custom configuration for that formatter.
-	Formatters map[string]legacyFormatterStruct `yaml:"formatters"`
+	Formatters map[string]FormatterConfig `yaml:"formatters"`
 
 	// Exclude specifies the files that should be excluded from formatting.
 	Exclude matcher.NamesPathsCfg `yaml:"exclude"`
 }
 
-type legacyFormatterStruct struct {
+type FormatterConfig struct {
 	// Args specifies the command-line arguments that are provided to the formatter.
 	Args []string `yaml:"args"`
 }
 
+type AssetConfig struct {
+	Legacy bool     `yaml:"legacy-config"`
+	Args   []string `yaml:"args"`
+}
+
 func IsLegacyConfig(cfgBytes []byte) bool {
-	var cfg legacyConfigStruct
+	var cfg Config
 	if err := yaml.Unmarshal(cfgBytes, &cfg); err != nil {
 		return false
 	}
 	return cfg.Legacy
 }
 
-func UpgradeLegacyConfig(cfgBytes []byte, factory formatplugin.Factory) ([]byte, error) {
-	var legacyCfg legacyConfigStruct
+func UpgradeConfig(cfgBytes []byte, factory formatplugin.Factory) ([]byte, error) {
+	var legacyCfg Config
 	if err := yaml.UnmarshalStrict(cfgBytes, &legacyCfg); err != nil {
 		return nil, errors.Wrapf(err, "failed to unmarshal legacy configuration")
 	}
@@ -72,9 +78,9 @@ func UpgradeLegacyConfig(cfgBytes []byte, factory formatplugin.Factory) ([]byte,
 	return outputBytes, nil
 }
 
-func upgradeLegacyConfig(legacyCfg legacyConfigStruct, factory formatplugin.Factory) (*formatplugin.Config, error) {
-	defaultCfg := legacyConfigStruct{
-		Formatters: map[string]legacyFormatterStruct{
+func upgradeLegacyConfig(legacyCfg Config, factory formatplugin.Factory) (*v0.Config, error) {
+	defaultCfg := Config{
+		Formatters: map[string]FormatterConfig{
 			"gofmt": {
 				Args: []string{
 					"-s",
@@ -91,13 +97,13 @@ func upgradeLegacyConfig(legacyCfg legacyConfigStruct, factory formatplugin.Fact
 	if reflect.DeepEqual(legacyCfg.Formatters, defaultCfg.Formatters) {
 		// special case: formatter configuration matches default, but exclude configuration does not. Upgrade just the
 		// exclude configuration.
-		return &formatplugin.Config{
+		return &v0.Config{
 			Exclude: legacyCfg.Exclude,
 		}, nil
 	}
 
 	// configuration does not match default: delegate to asset upgraders
-	upgradedCfg := formatplugin.Config{}
+	upgradedCfg := v0.Config{}
 
 	var sortedKeys []string
 	for k := range legacyCfg.Formatters {
@@ -106,7 +112,7 @@ func upgradeLegacyConfig(legacyCfg legacyConfigStruct, factory formatplugin.Fact
 	sort.Strings(sortedKeys)
 
 	if len(sortedKeys) > 0 {
-		upgradedCfg.Formatters = make(map[string]formatplugin.FormatterConfig)
+		upgradedCfg.Formatters = make(map[string]v0.FormatterConfig)
 	}
 
 	for _, k := range sortedKeys {
@@ -115,9 +121,12 @@ func upgradeLegacyConfig(legacyCfg legacyConfigStruct, factory formatplugin.Fact
 			return nil, err
 		}
 
-		assetCfgBytes, err := yaml.Marshal(legacyCfg.Formatters[k])
+		assetCfgBytes, err := yaml.Marshal(AssetConfig{
+			Legacy: true,
+			Args:   legacyCfg.Formatters[k].Args,
+		})
 		if err != nil {
-			return nil, errors.Wrapf(err, "failed to marshal asset configuration as YAML")
+			return nil, errors.Wrapf(err, "failed to marshal legacy asset configuration for formatter %q as YAML", k)
 		}
 
 		upgradedBytes, err := upgrader.UpgradeConfig(assetCfgBytes)
@@ -127,11 +136,11 @@ func upgradeLegacyConfig(legacyCfg legacyConfigStruct, factory formatplugin.Fact
 
 		var yamlRep yaml.MapSlice
 		if err := yaml.Unmarshal(upgradedBytes, &yamlRep); err != nil {
-			return nil, errors.Wrapf(err, "failed to unmarshal YAML")
+			return nil, errors.Wrapf(err, "failed to unmarshal YAML for upgraded configuration for formatter %q", k)
 		}
 
-		upgradedCfg.Formatters[k] = formatplugin.FormatterConfig{
-			Config: &yamlRep,
+		upgradedCfg.Formatters[k] = v0.FormatterConfig{
+			Config: yamlRep,
 		}
 	}
 	return &upgradedCfg, nil

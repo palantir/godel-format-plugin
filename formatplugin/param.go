@@ -12,18 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package cmd
+package formatplugin
 
 import (
-	"github.com/palantir/godel/framework/pluginapi"
-
-	"github.com/palantir/godel-format-plugin/formatplugin/config"
+	"github.com/palantir/pkg/matcher"
 )
 
-var upgradeConfigCmd = pluginapi.CobraUpgradeConfigCmd(func(cfgBytes []byte) ([]byte, error) {
-	return config.UpgradeConfig(cfgBytes, cliFormatterFactory)
-})
-
-func init() {
-	RootCmd.AddCommand(upgradeConfigCmd)
+type Param struct {
+	Formatters []Formatter
+	Exclude    matcher.Matcher
 }

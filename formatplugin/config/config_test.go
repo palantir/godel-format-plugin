@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package formatplugin_test
+package config_test
 
 import (
 	"testing"
@@ -22,7 +22,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v2"
 
-	"github.com/palantir/godel-format-plugin/formatplugin"
+	"github.com/palantir/godel-format-plugin/formatplugin/config"
 )
 
 func TestReadConfig(t *testing.T) {
@@ -36,25 +36,27 @@ exclude:
     - "*.pb.go"
 `
 
-	var got formatplugin.Config
+	var got config.Format
 	err := yaml.Unmarshal([]byte(in), &got)
 	require.NoError(t, err)
 
-	assert.Equal(t, formatplugin.Config{
-		Formatters: map[string]formatplugin.FormatterConfig{
-			"ptimports": {
-				Config: &yaml.MapSlice{
-					yaml.MapItem{
-						Key:   "no-simplify",
-						Value: true,
-					},
-				},
-			},
-		},
+	want := config.Format{
 		Exclude: matcher.NamesPathsCfg{
 			Names: []string{
 				"*.pb.go",
 			},
 		},
-	}, got)
+	}
+	want.SetFormatters(map[string]config.Formatter{
+		"ptimports": {
+			Config: yaml.MapSlice{
+				yaml.MapItem{
+					Key:   "no-simplify",
+					Value: true,
+				},
+			},
+		},
+	})
+
+	assert.Equal(t, want, got)
 }
