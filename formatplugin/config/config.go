@@ -12,27 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package formatplugin
+package config
 
 import (
 	"sort"
 
-	"github.com/palantir/pkg/matcher"
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
+
+	"github.com/palantir/godel-format-plugin/formatplugin"
+	"github.com/palantir/godel-format-plugin/formatplugin/config/internal/v0"
 )
 
-type Param struct {
-	Formatters []Formatter
-	Exclude    matcher.Matcher
+type Format v0.Config
+
+func (cfg *Format) SetFormatters(formatters map[string]Formatter) {
+	translatedFormatters := make(map[string]v0.FormatterConfig)
+	for k, v := range formatters {
+		translatedFormatters[k] = v0.FormatterConfig(v)
+	}
+	cfg.Formatters = translatedFormatters
 }
 
-type Config struct {
-	Formatters map[string]FormatterConfig `yaml:"formatters"`
-	Exclude    matcher.NamesPathsCfg      `yaml:"exclude"`
-}
-
-func (cfg *Config) ToParam(factory Factory) (Param, error) {
+func (cfg *Format) ToParam(factory formatplugin.Factory) (formatplugin.Param, error) {
 	knownTypes := make(map[string]struct{})
 	for _, formatterType := range factory.FormatterTypes() {
 		knownTypes[formatterType] = struct{}{}
@@ -52,34 +54,32 @@ func (cfg *Config) ToParam(factory Factory) (Param, error) {
 		unknownFormatters = append(unknownFormatters, k)
 	}
 	if len(unknownFormatters) > 0 {
-		return Param{}, errors.Errorf("formatters %v not recognized -- known formatters are %v", unknownFormatters, factory.FormatterTypes())
+		return formatplugin.Param{}, errors.Errorf("formatters %v not recognized -- known formatters are %v", unknownFormatters, factory.FormatterTypes())
 	}
 
-	var formatters []Formatter
+	var formatters []formatplugin.Formatter
 	for _, formatterName := range factory.FormatterTypes() {
 		var cfgBytes []byte
 		if formatterCfg, ok := cfg.Formatters[formatterName]; ok {
 			if cfgMapSlice := formatterCfg.Config; cfgMapSlice != nil {
-				outBytes, err := yaml.Marshal(*cfgMapSlice)
+				outBytes, err := yaml.Marshal(cfgMapSlice)
 				if err != nil {
-					return Param{}, errors.Wrapf(err, "failed to marshal configuration for %s", formatterName)
+					return formatplugin.Param{}, errors.Wrapf(err, "failed to marshal configuration for %s", formatterName)
 				}
 				cfgBytes = outBytes
 			}
 		}
 		formatter, err := factory.NewFormatter(formatterName, cfgBytes)
 		if err != nil {
-			return Param{}, err
+			return formatplugin.Param{}, err
 		}
 		formatters = append(formatters, formatter)
 	}
 
-	return Param{
+	return formatplugin.Param{
 		Formatters: formatters,
 		Exclude:    cfg.Exclude.Matcher(),
 	}, nil
 }
 
-type FormatterConfig struct {
-	Config *yaml.MapSlice `yaml:"config"`
-}
+type Formatter v0.FormatterConfig
