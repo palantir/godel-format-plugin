@@ -37,7 +37,7 @@ type FormatterConfig struct {
 func UpgradeConfig(cfgBytes []byte, factory formatplugin.Factory) ([]byte, error) {
 	var cfg Config
 	if err := yaml.UnmarshalStrict(cfgBytes, &cfg); err != nil {
-		return nil, errors.Wrapf(err, "failed to unmarshal input as v0 YAML")
+		return nil, errors.Wrapf(err, "failed to unmarshal input as format-plugin v0 YAML")
 	}
 	changed, err := upgradeAssets(&cfg, factory)
 	if err != nil {
@@ -48,7 +48,7 @@ func UpgradeConfig(cfgBytes []byte, factory formatplugin.Factory) ([]byte, error
 	}
 	upgradedBytes, err := yaml.Marshal(cfg)
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to marshal upgraded v0 configuration")
+		return nil, errors.Wrapf(err, "failed to marshal upgraded format-plugin v0 configuration")
 	}
 	return upgradedBytes, nil
 }

@@ -26,17 +26,20 @@ import (
 
 type Format v0.Config
 
-func (cfg *Format) SetFormatters(formatters map[string]Formatter) {
-	translatedFormatters := make(map[string]v0.FormatterConfig)
-	for k, v := range formatters {
-		translatedFormatters[k] = v0.FormatterConfig(v)
+func ToFormatters(in map[string]Formatter) map[string]v0.FormatterConfig {
+	if in == nil {
+		return nil
 	}
-	cfg.Formatters = translatedFormatters
+	out := make(map[string]v0.FormatterConfig, len(in))
+	for k, v := range in {
+		out[k] = v0.FormatterConfig(v)
+	}
+	return out
 }
 
 func (cfg *Format) ToParam(factory formatplugin.Factory) (formatplugin.Param, error) {
 	knownTypes := make(map[string]struct{})
-	for _, formatterType := range factory.FormatterTypes() {
+	for _, formatterType := range factory.Types() {
 		knownTypes[formatterType] = struct{}{}
 	}
 
@@ -54,11 +57,11 @@ func (cfg *Format) ToParam(factory formatplugin.Factory) (formatplugin.Param, er
 		unknownFormatters = append(unknownFormatters, k)
 	}
 	if len(unknownFormatters) > 0 {
-		return formatplugin.Param{}, errors.Errorf("formatters %v not recognized -- known formatters are %v", unknownFormatters, factory.FormatterTypes())
+		return formatplugin.Param{}, errors.Errorf("formatters %v not recognized -- known formatters are %v", unknownFormatters, factory.Types())
 	}
 
 	var formatters []formatplugin.Formatter
-	for _, formatterName := range factory.FormatterTypes() {
+	for _, formatterName := range factory.Types() {
 		var cfgBytes []byte
 		if formatterCfg, ok := cfg.Formatters[formatterName]; ok {
 			if cfgMapSlice := formatterCfg.Config; cfgMapSlice != nil {

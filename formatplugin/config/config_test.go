@@ -41,22 +41,24 @@ exclude:
 	require.NoError(t, err)
 
 	want := config.Format{
+		Formatters: config.ToFormatters(
+			map[string]config.Formatter{
+				"ptimports": {
+					Config: yaml.MapSlice{
+						yaml.MapItem{
+							Key:   "no-simplify",
+							Value: true,
+						},
+					},
+				},
+			},
+		),
 		Exclude: matcher.NamesPathsCfg{
 			Names: []string{
 				"*.pb.go",
 			},
 		},
 	}
-	want.SetFormatters(map[string]config.Formatter{
-		"ptimports": {
-			Config: yaml.MapSlice{
-				yaml.MapItem{
-					Key:   "no-simplify",
-					Value: true,
-				},
-			},
-		},
-	})
 
 	assert.Equal(t, want, got)
 }
