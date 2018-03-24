@@ -25,6 +25,7 @@ import (
 	"github.com/palantir/godel-format-plugin/formatplugin"
 	"github.com/palantir/godel-format-plugin/formatplugin/config"
 	"github.com/palantir/godel-format-plugin/formatter"
+	"github.com/palantir/godel-format-plugin/formatter/formatterfactory"
 )
 
 var (
@@ -59,7 +60,7 @@ func init() {
 		if err != nil {
 			return err
 		}
-		cliFormatterFactory, err = formatter.NewFormatterFactory(assetFormatters, assetConfigUpgraders)
+		cliFormatterFactory, err = formatterfactory.New(assetFormatters, assetConfigUpgraders)
 		if err != nil {
 			return err
 		}
