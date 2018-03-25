@@ -59,7 +59,7 @@
   branch = "master"
   name = "github.com/palantir/godel"
   packages = ["framework/artifactresolver","framework/builtintasks","framework/builtintasks/checkpath","framework/builtintasks/githooks","framework/builtintasks/githubwiki","framework/builtintasks/idea","framework/builtintasks/installupdate","framework/builtintasks/installupdate/layout","framework/builtintasks/packages","framework/godel","framework/godellauncher","framework/internal/legacyplugins","framework/internal/pathsinternal","framework/pluginapi","framework/pluginapitester","framework/plugins","framework/verifyorder","godelgetter","pkg/osarch","pkg/products","pkg/versionedconfig"]
-  revision = "07703cc668727a6d3eedfd339ce4d2e26f970ec3"
+  revision = "9a68fc561092131fdf43a4a15d1ae920acf391e2"
 
 [[projects]]
   branch = "master"

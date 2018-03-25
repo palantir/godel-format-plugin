@@ -24,7 +24,7 @@ import (
 )
 
 func UpgradeConfig(cfgBytes []byte, factory formatplugin.Factory) ([]byte, error) {
-	if legacy.IsLegacyConfig(cfgBytes) {
+	if versionedconfig.IsLegacyConfig(cfgBytes) {
 		v0Bytes, err := legacy.UpgradeConfig(cfgBytes, factory)
 		if err != nil {
 			return nil, err
