@@ -18,6 +18,7 @@ import (
 	"reflect"
 	"sort"
 
+	"github.com/palantir/godel/pkg/versionedconfig"
 	"github.com/palantir/pkg/matcher"
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
@@ -27,7 +28,7 @@ import (
 )
 
 type Config struct {
-	Legacy bool `yaml:"legacy-config"`
+	versionedconfig.ConfigWithLegacy `yaml:",inline"`
 
 	// Formatters specifies the configuration used by the formatters. The key is the name of the formatter and the
 	// value is the custom configuration for that formatter.
@@ -43,37 +44,29 @@ type FormatterConfig struct {
 }
 
 type AssetConfig struct {
-	Legacy bool     `yaml:"legacy-config"`
-	Args   []string `yaml:"args"`
-}
-
-func IsLegacyConfig(cfgBytes []byte) bool {
-	var cfg Config
-	if err := yaml.Unmarshal(cfgBytes, &cfg); err != nil {
-		return false
-	}
-	return cfg.Legacy
+	versionedconfig.ConfigWithLegacy `yaml:",inline"`
+	Args                             []string `yaml:"args"`
 }
 
 func UpgradeConfig(cfgBytes []byte, factory formatplugin.Factory) ([]byte, error) {
 	var legacyCfg Config
 	if err := yaml.UnmarshalStrict(cfgBytes, &legacyCfg); err != nil {
-		return nil, errors.Wrapf(err, "failed to unmarshal legacy configuration")
+		return nil, errors.Wrapf(err, "failed to unmarshal format-plugin legacy configuration")
 	}
 
-	upgradedCfg, err := upgradeLegacyConfig(legacyCfg, factory)
+	v0Cfg, err := upgradeLegacyConfig(legacyCfg, factory)
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to upgrade config")
+		return nil, errors.Wrapf(err, "failed to upgrade format-plugin legacy configuration")
 	}
 
 	// indicates that this is the default config
-	if upgradedCfg == nil {
+	if v0Cfg == nil {
 		return nil, nil
 	}
 
-	outputBytes, err := yaml.Marshal(*upgradedCfg)
+	outputBytes, err := yaml.Marshal(*v0Cfg)
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to marshal configuration as YAML")
+		return nil, errors.Wrapf(err, "failed to marshal format-plugin v0 configuration")
 	}
 	return outputBytes, nil
 }
@@ -122,21 +115,23 @@ func upgradeLegacyConfig(legacyCfg Config, factory formatplugin.Factory) (*v0.Co
 		}
 
 		assetCfgBytes, err := yaml.Marshal(AssetConfig{
-			Legacy: true,
-			Args:   legacyCfg.Formatters[k].Args,
+			ConfigWithLegacy: versionedconfig.ConfigWithLegacy{
+				Legacy: true,
+			},
+			Args: legacyCfg.Formatters[k].Args,
 		})
 		if err != nil {
-			return nil, errors.Wrapf(err, "failed to marshal legacy asset configuration for formatter %q as YAML", k)
+			return nil, errors.Wrapf(err, "failed to marshal formatter %q legacy configuration", k)
 		}
 
 		upgradedBytes, err := upgrader.UpgradeConfig(assetCfgBytes)
 		if err != nil {
-			return nil, errors.Wrapf(err, "failed to upgrade configuration for formatter %s", k)
+			return nil, errors.Wrapf(err, "failed to upgrade formatter %q legacy configuration", k)
 		}
 
 		var yamlRep yaml.MapSlice
 		if err := yaml.Unmarshal(upgradedBytes, &yamlRep); err != nil {
-			return nil, errors.Wrapf(err, "failed to unmarshal YAML for upgraded configuration for formatter %q", k)
+			return nil, errors.Wrapf(err, "failed to unmarshal formatter %q configuration as yaml.MapSlice", k)
 		}
 
 		upgradedCfg.Formatters[k] = v0.FormatterConfig{
