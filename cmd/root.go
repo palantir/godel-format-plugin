@@ -74,7 +74,6 @@ func readFormatConfigFromFile(cfgFile string) (config.Format, error) {
 	if os.IsNotExist(err) {
 		return config.Format{}, nil
 	}
-
 	if err != nil {
 		return config.Format{}, errors.Wrapf(err, "failed to read config file")
 	}
