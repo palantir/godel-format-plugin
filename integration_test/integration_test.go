@@ -32,15 +32,80 @@ const (
 `
 )
 
+const (
+	ptimportsAssetLocator  = "com.palantir.godel-format-asset-ptimports:ptimports-asset:1.0.0-rc5"
+	ptimportsAssetResolver = "https://palantir.bintray.com/releases/{{GroupPath}}/{{Product}}/{{Version}}/{{Product}}-{{Version}}-{{OS}}-{{Arch}}.tgz"
+)
+
 func TestUpgradeConfig(t *testing.T) {
 	pluginPath, err := products.Bin("format-plugin")
 	require.NoError(t, err)
 	pluginProvider := pluginapitester.NewPluginProvider(pluginPath)
 
+	assetProvider, err := pluginapitester.NewAssetProviderFromLocator(ptimportsAssetLocator, ptimportsAssetResolver)
+	require.NoError(t, err)
+
 	pluginapitester.RunUpgradeConfigTest(t,
 		pluginProvider,
-		nil,
+		[]pluginapitester.AssetProvider{
+			assetProvider,
+		},
 		[]pluginapitester.UpgradeConfigTestCase{
+			{
+				Name: "default legacy format config is upgraded to blank",
+				ConfigFiles: map[string]string{
+					"godel/config/godel.yml": godelYML,
+					"godel/config/format-plugin.yml": `
+legacy-config: true
+formatters:
+  gofmt:
+    args:
+      - "-s"
+`,
+				},
+				WantOutput: "Upgraded configuration for format-plugin.yml\n",
+				WantFiles: map[string]string{
+					"godel/config/format-plugin.yml": `formatters:
+  ptimports:
+    config:
+      separate-project-imports: true
+exclude:
+  names: []
+  paths: []
+`,
+				},
+			},
+			{
+				Name: "legacy format config excludes are upgraded",
+				ConfigFiles: map[string]string{
+					"godel/config/godel.yml": godelYML,
+					"godel/config/format-plugin.yml": `
+legacy-config: true
+formatters:
+  gofmt:
+    args:
+      - "-s"
+exclude:
+  names:
+    - "foo.go"
+  paths:
+    - "integration_test"
+`,
+				},
+				WantOutput: "Upgraded configuration for format-plugin.yml\n",
+				WantFiles: map[string]string{
+					"godel/config/format-plugin.yml": `formatters:
+  ptimports:
+    config:
+      separate-project-imports: true
+exclude:
+  names:
+  - foo.go
+  paths:
+  - integration_test
+`,
+				},
+			},
 			{
 				Name: "current config is unmodified",
 				ConfigFiles: map[string]string{
