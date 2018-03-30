@@ -23,16 +23,6 @@ import (
 )
 
 const (
-	godelYML = `exclude:
-  names:
-    - "\\..+"
-    - "vendor"
-  paths:
-    - "godel"
-`
-)
-
-const (
 	ptimportsAssetLocator  = "com.palantir.godel-format-asset-ptimports:ptimports-asset:1.0.0-rc5"
 	ptimportsAssetResolver = "https://palantir.bintray.com/releases/{{GroupPath}}/{{Product}}/{{Version}}/{{Product}}-{{Version}}-{{OS}}-{{Arch}}.tgz"
 )
@@ -54,15 +44,13 @@ func TestUpgradeConfig(t *testing.T) {
 			{
 				Name: "default legacy format config is upgraded to blank",
 				ConfigFiles: map[string]string{
-					"godel/config/godel.yml": godelYML,
-					"godel/config/format-plugin.yml": `
-legacy-config: true
-formatters:
+					"godel/config/format.yml": `formatters:
   gofmt:
     args:
       - "-s"
 `,
 				},
+				Legacy:     true,
 				WantOutput: "Upgraded configuration for format-plugin.yml\n",
 				WantFiles: map[string]string{
 					"godel/config/format-plugin.yml": `formatters:
@@ -78,7 +66,6 @@ exclude:
 			{
 				Name: "legacy format config excludes are upgraded",
 				ConfigFiles: map[string]string{
-					"godel/config/godel.yml": godelYML,
 					"godel/config/format-plugin.yml": `
 legacy-config: true
 formatters:
@@ -109,7 +96,6 @@ exclude:
 			{
 				Name: "current config is unmodified",
 				ConfigFiles: map[string]string{
-					"godel/config/godel.yml": godelYML,
 					"godel/config/format-plugin.yml": `
 # comment
 exclude:
