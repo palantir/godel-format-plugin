@@ -30,8 +30,7 @@ import (
 )
 
 var (
-	DebugFlagVal bool
-
+	DebugFlagVal            bool
 	projectDirFlagVal       string
 	godelConfigFileFlagVal  string
 	formatConfigFileFlagVal string
