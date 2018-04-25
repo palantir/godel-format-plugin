@@ -27,5 +27,5 @@ func main() {
 	if ok := pluginapi.InfoCmd(os.Args, os.Stdout, cmd.PluginInfo); ok {
 		return
 	}
-	os.Exit(cobracli.ExecuteWithDefaultParamsWithVersion(cmd.RootCmd, &cmd.DebugFlagVal, ""))
+	os.Exit(cobracli.ExecuteWithDebugVarAndDefaultParams(cmd.RootCmd, &cmd.DebugFlagVal))
 }
