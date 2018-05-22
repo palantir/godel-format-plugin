@@ -54,6 +54,7 @@ func AssetFormatterCreators(assetPaths ...string) ([]Creator, []formatplugin.Con
 	var configUpgraders []formatplugin.ConfigUpgrader
 	formatterNameToAssets := make(map[string][]string)
 	for _, currAssetPath := range assetPaths {
+		currAssetPath := currAssetPath
 		currFormatter := assetFormatter{
 			assetPath: currAssetPath,
 		}
