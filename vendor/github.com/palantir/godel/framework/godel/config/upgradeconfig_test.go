@@ -26,7 +26,7 @@ func TestUpgradeConfig(t *testing.T) {
 		nil,
 		[]pluginapitester.UpgradeConfigTestCase{
 			{
-				Name: "legacy config is not upgraded if exclue.yml not present",
+				Name: "legacy config is not upgraded if exclude.yml not present",
 				ConfigFiles: map[string]string{
 					"godel/config/godel.yml": `
 exclude:
@@ -79,17 +79,7 @@ paths:
 				WantOutput: `Upgraded configuration for godel.yml
 `,
 				WantFiles: map[string]string{
-					"godel/config/godel.yml": `version: ""
-tasks-config-providers:
-  resolvers: []
-  providers: []
-default-tasks:
-  resolvers: []
-  tasks: {}
-plugins:
-  resolvers: []
-  plugins: []
-exclude:
+					"godel/config/godel.yml": `exclude:
   names:
   - \..+
   - vendor
@@ -118,6 +108,8 @@ default-tasks:
       assets:
       - locator:
           id: com.palantir.godel-okgo-asset-nobadfuncs:nobadfuncs-asset:1.0.0-rc2
+environment:
+  GO111MODULE: on
 exclude:
   names:
     - "\\..+"
@@ -142,6 +134,8 @@ default-tasks:
       assets:
       - locator:
           id: com.palantir.godel-okgo-asset-nobadfuncs:nobadfuncs-asset:1.0.0-rc2
+environment:
+  GO111MODULE: on
 exclude:
   names:
     - "\\..+"

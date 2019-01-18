@@ -1,4 +1,4 @@
-// Copyright 2016 Palantir Technologies. All rights reserved.
+// Copyright (c) 2016 Palantir Technologies. All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
@@ -76,6 +76,29 @@ func (m *RegExpMatcher) Matches(in interface{}) error {
 
 func (m RegExpMatcher) String() string {
 	return fmt.Sprintf("matchesRegexp(%s)", m.WantRegexp)
+}
+
+type SliceMatcher []Matcher
+
+func (s SliceMatcher) Matches(in interface{}) error {
+	items := reflect.ValueOf(in)
+	switch items.Kind() {
+	case reflect.Slice, reflect.Array:
+		break
+	default:
+		return fmt.Errorf("kind of %v is not a slice or array", in)
+	}
+
+	if len(s) != items.Len() {
+		return fmt.Errorf("want: %+v\ngot:  %+v\nsize %d != %d", s, in, len(s), items.Len())
+	}
+	for i := 0; i < items.Len(); i++ {
+		if err := s[i].Matches(items.Index(i).Interface()); err != nil {
+			indented := strings.Replace("\n"+err.Error(), "\n", "\n\t", -1)
+			return fmt.Errorf("want: %+v\ngot:  %+v\nvalue for index %d did not match:%s", s, in, i, indented)
+		}
+	}
+	return nil
 }
 
 type MapMatcher map[string]Matcher
