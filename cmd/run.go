@@ -36,11 +36,11 @@ var runCmd = &cobra.Command{
 		}
 
 		if godelConfigFileFlagVal != "" {
-			cfgVal, err := godelconfig.ReadGodelConfigFromFile(godelConfigFileFlagVal)
+			exclude, err := godelconfig.ReadGodelConfigExcludesFromFile(godelConfigFileFlagVal)
 			if err != nil {
 				return err
 			}
-			formatCfg.Exclude.Add(cfgVal.Exclude)
+			formatCfg.Exclude.Add(exclude)
 		}
 
 		param, err := formatCfg.ToParam(cliFormatterFactory)

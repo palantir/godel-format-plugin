@@ -21,6 +21,10 @@
 #  version = "2.4.0"
 
 [[constraint]]
+  version = "2.14.0"
+  name = "github.com/palantir/godel"
+
+[[constraint]]
   branch = "develop"
   name = "github.com/nmiyake/pkg"
 
