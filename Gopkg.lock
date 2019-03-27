@@ -119,6 +119,22 @@
   version = "v2.14.0"
 
 [[projects]]
+  digest = "1:5c2821af89c4854838c1e5036ee5f2c9650bd500e86e9b2f3949c7c25b69caab"
+  name = "github.com/palantir/godel-format-plugin"
+  packages = [
+    "cmd",
+    "formatplugin",
+    "formatplugin/config",
+    "formatplugin/config/internal/legacy",
+    "formatplugin/config/internal/v0",
+    "formatter",
+    "formatter/formatterfactory",
+  ]
+  pruneopts = "UT"
+  revision = "8e6e02ea3dcdeff05847333300ffe97711115e0b"
+  version = "v1.3.0"
+
+[[projects]]
   digest = "1:3daca7f2d75df7e74dce40464a5cea6e14989be34b4364cdbc38c12ea2e5d34c"
   name = "github.com/palantir/pkg"
   packages = [
@@ -225,6 +241,13 @@
   input-imports = [
     "github.com/nmiyake/pkg/dirs",
     "github.com/nmiyake/pkg/gofiles",
+    "github.com/palantir/godel-format-plugin/cmd",
+    "github.com/palantir/godel-format-plugin/formatplugin",
+    "github.com/palantir/godel-format-plugin/formatplugin/config",
+    "github.com/palantir/godel-format-plugin/formatplugin/config/internal/legacy",
+    "github.com/palantir/godel-format-plugin/formatplugin/config/internal/v0",
+    "github.com/palantir/godel-format-plugin/formatter",
+    "github.com/palantir/godel-format-plugin/formatter/formatterfactory",
     "github.com/palantir/godel/framework/godel/config",
     "github.com/palantir/godel/framework/pluginapi",
     "github.com/palantir/godel/framework/pluginapi/v2/pluginapi",
