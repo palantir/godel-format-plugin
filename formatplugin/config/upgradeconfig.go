@@ -20,7 +20,7 @@ import (
 
 	"github.com/palantir/godel-format-plugin/formatplugin"
 	"github.com/palantir/godel-format-plugin/formatplugin/config/internal/legacy"
-	"github.com/palantir/godel-format-plugin/formatplugin/config/internal/v0"
+	v0 "github.com/palantir/godel-format-plugin/formatplugin/config/internal/v0"
 )
 
 func UpgradeConfig(cfgBytes []byte, factory formatplugin.Factory) ([]byte, error) {

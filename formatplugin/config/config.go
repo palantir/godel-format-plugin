@@ -21,7 +21,7 @@ import (
 	"gopkg.in/yaml.v2"
 
 	"github.com/palantir/godel-format-plugin/formatplugin"
-	"github.com/palantir/godel-format-plugin/formatplugin/config/internal/v0"
+	v0 "github.com/palantir/godel-format-plugin/formatplugin/config/internal/v0"
 )
 
 type Format v0.Config
