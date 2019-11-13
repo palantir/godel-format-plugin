@@ -12,19 +12,34 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package artifactresolver
 
 import (
-	"os"
+	"fmt"
 
-	"github.com/palantir/godel/v2/framework/pluginapi/v2/pluginapi"
-
-	"github.com/palantir/godel-format-plugin/cmd"
+	"github.com/palantir/godel/v2/pkg/osarch"
 )
 
-func main() {
-	if ok := pluginapi.InfoCmd(os.Args, os.Stdout, cmd.PluginInfo); ok {
-		return
-	}
-	os.Exit(cmd.Execute())
+type LocatorWithResolverParam struct {
+	LocatorWithChecksums LocatorParam
+	Resolver             Resolver
+}
+
+type LocatorParam struct {
+	Locator
+	Checksums map[osarch.OSArch]string
+}
+
+type Locator struct {
+	Group   string
+	Product string
+	Version string
+}
+
+func (l Locator) String() string {
+	return fmt.Sprintf("%s:%s", l.GroupAndProductString(), l.Version)
+}
+
+func (l Locator) GroupAndProductString() string {
+	return fmt.Sprintf("%s:%s", l.Group, l.Product)
 }

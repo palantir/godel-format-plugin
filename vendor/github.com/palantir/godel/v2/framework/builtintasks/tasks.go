@@ -12,19 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package builtintasks
 
 import (
-	"os"
-
-	"github.com/palantir/godel/v2/framework/pluginapi/v2/pluginapi"
-
-	"github.com/palantir/godel-format-plugin/cmd"
+	"github.com/palantir/godel/v2/framework/godel/config"
+	"github.com/palantir/godel/v2/framework/godellauncher"
 )
 
-func main() {
-	if ok := pluginapi.InfoCmd(os.Args, os.Stdout, cmd.PluginInfo); ok {
-		return
+func Tasks(tasksCfgInfo config.TasksConfigInfo) []godellauncher.Task {
+	return []godellauncher.Task{
+		VersionTask(),
+		InstallTask(),
+		UpdateTask(),
+		InfoTask(),
+		ExecTask(),
+		CheckPathTask(),
+		GitHooksTask(),
+		GitHubWikiTask(),
+		IDEATask(),
+		PackagesTask(),
+		TasksConfigTask(tasksCfgInfo),
 	}
-	os.Exit(cmd.Execute())
 }

@@ -12,19 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package builtintasks
 
 import (
-	"os"
+	"fmt"
 
-	"github.com/palantir/godel/v2/framework/pluginapi/v2/pluginapi"
+	"github.com/spf13/cobra"
 
-	"github.com/palantir/godel-format-plugin/cmd"
+	"github.com/palantir/godel/v2/framework/godel"
+	"github.com/palantir/godel/v2/framework/godellauncher"
 )
 
-func main() {
-	if ok := pluginapi.InfoCmd(os.Args, os.Stdout, cmd.PluginInfo); ok {
-		return
-	}
-	os.Exit(cmd.Execute())
+var Version = "unspecified"
+
+func VersionTask() godellauncher.Task {
+	return godellauncher.CobraCLITask(&cobra.Command{
+		Use:   "version",
+		Short: fmt.Sprintf("Print %s version", godel.AppName),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			_, _ = fmt.Fprintln(cmd.OutOrStdout(), godel.VersionOutput())
+			return nil
+		},
+	}, nil)
 }

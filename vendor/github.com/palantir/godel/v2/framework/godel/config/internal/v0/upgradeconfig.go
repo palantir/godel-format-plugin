@@ -12,19 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package v0
 
 import (
-	"os"
-
-	"github.com/palantir/godel/v2/framework/pluginapi/v2/pluginapi"
-
-	"github.com/palantir/godel-format-plugin/cmd"
+	"github.com/pkg/errors"
+	"gopkg.in/yaml.v2"
 )
 
-func main() {
-	if ok := pluginapi.InfoCmd(os.Args, os.Stdout, cmd.PluginInfo); ok {
-		return
+func UpgradeConfig(cfgBytes []byte) ([]byte, error) {
+	var cfg GodelConfig
+	if err := yaml.Unmarshal(cfgBytes, &cfg); err != nil {
+		return nil, errors.Wrapf(err, "failed to unmarshal godel v0 configuration")
 	}
-	os.Exit(cmd.Execute())
+	return cfgBytes, nil
 }
