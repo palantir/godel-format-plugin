@@ -15,7 +15,7 @@
 package cmd
 
 import (
-	godelconfig "github.com/palantir/godel/framework/godel/config"
+	godelconfig "github.com/palantir/godel/v2/framework/godel/config"
 	"github.com/spf13/cobra"
 
 	"github.com/palantir/godel-format-plugin/formatplugin"
