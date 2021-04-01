@@ -17,11 +17,10 @@ package config
 import (
 	"sort"
 
-	"github.com/pkg/errors"
-	"gopkg.in/yaml.v2"
-
 	"github.com/palantir/godel-format-plugin/formatplugin"
 	v0 "github.com/palantir/godel-format-plugin/formatplugin/config/internal/v0"
+	"github.com/pkg/errors"
+	"gopkg.in/yaml.v2"
 )
 
 type Format v0.Config

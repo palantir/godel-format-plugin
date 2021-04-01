@@ -15,10 +15,9 @@
 package formatterfactory
 
 import (
-	"github.com/pkg/errors"
-
 	"github.com/palantir/godel-format-plugin/formatplugin"
 	"github.com/palantir/godel-format-plugin/formatter"
+	"github.com/pkg/errors"
 )
 
 func New(providedFormatterCreators []formatter.Creator, providedConfigUpgraders []formatplugin.ConfigUpgrader) (formatplugin.Factory, error) {
