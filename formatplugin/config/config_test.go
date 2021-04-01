@@ -17,12 +17,11 @@ package config_test
 import (
 	"testing"
 
+	"github.com/palantir/godel-format-plugin/formatplugin/config"
 	"github.com/palantir/pkg/matcher"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v2"
-
-	"github.com/palantir/godel-format-plugin/formatplugin/config"
 )
 
 func TestReadConfig(t *testing.T) {

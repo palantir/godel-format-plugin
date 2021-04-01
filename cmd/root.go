@@ -18,16 +18,15 @@ import (
 	"io/ioutil"
 	"os"
 
+	"github.com/palantir/godel-format-plugin/formatplugin"
+	"github.com/palantir/godel-format-plugin/formatplugin/config"
+	"github.com/palantir/godel-format-plugin/formatter"
+	"github.com/palantir/godel-format-plugin/formatter/formatterfactory"
 	"github.com/palantir/godel/v2/framework/pluginapi"
 	"github.com/palantir/pkg/cobracli"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"
-
-	"github.com/palantir/godel-format-plugin/formatplugin"
-	"github.com/palantir/godel-format-plugin/formatplugin/config"
-	"github.com/palantir/godel-format-plugin/formatter"
-	"github.com/palantir/godel-format-plugin/formatter/formatterfactory"
 )
 
 var (

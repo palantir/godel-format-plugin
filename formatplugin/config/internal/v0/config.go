@@ -18,11 +18,10 @@ import (
 	"bytes"
 	"sort"
 
+	"github.com/palantir/godel-format-plugin/formatplugin"
 	"github.com/palantir/pkg/matcher"
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
-
-	"github.com/palantir/godel-format-plugin/formatplugin"
 )
 
 type Config struct {
