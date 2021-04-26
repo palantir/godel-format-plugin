@@ -23,8 +23,8 @@ import (
 )
 
 const (
-	ptimportsAssetLocator  = "com.palantir.godel-format-asset-ptimports:ptimports-asset:1.0.0-rc5"
-	ptimportsAssetResolver = "https://palantir.bintray.com/releases/{{GroupPath}}/{{Product}}/{{Version}}/{{Product}}-{{Version}}-{{OS}}-{{Arch}}.tgz"
+	ptimportsAssetLocator  = "com.palantir.godel-format-asset-ptimports:ptimports-asset:1.8.0"
+	ptimportsAssetResolver = "https://github.com/{{index GroupParts 1}}/{{index GroupParts 2}}/releases/download/v{{Version}}/{{Product}}-{{Version}}-{{OS}}-{{Arch}}.tgz"
 )
 
 func TestUpgradeConfig(t *testing.T) {
