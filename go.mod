@@ -5,7 +5,7 @@ go 1.16
 require (
 	github.com/nmiyake/pkg/dirs v1.0.0
 	github.com/nmiyake/pkg/gofiles v1.0.0
-	github.com/palantir/godel/v2 v2.38.0
+	github.com/palantir/godel/v2 v2.39.0
 	github.com/palantir/pkg/cobracli v1.0.1
 	github.com/palantir/pkg/matcher v1.0.1
 	github.com/pkg/errors v0.8.1
