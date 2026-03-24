@@ -29,7 +29,6 @@ func New(providedFormatterCreators []formatter.Creator, providedConfigUpgraders 
 	}
 	configUpgraders := make(map[string]formatplugin.ConfigUpgrader)
 	for _, currUpgrader := range providedConfigUpgraders {
-		currUpgrader := currUpgrader
 		configUpgraders[currUpgrader.TypeName()] = currUpgrader
 	}
 	return &formatterFactoryImpl{

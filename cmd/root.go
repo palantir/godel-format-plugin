@@ -15,7 +15,6 @@
 package cmd
 
 import (
-	"io/ioutil"
 	"os"
 
 	"github.com/palantir/godel-format-plugin/formatplugin"
@@ -73,7 +72,7 @@ func init() {
 }
 
 func readFormatConfigFromFile(cfgFile string) (config.Format, error) {
-	bytes, err := ioutil.ReadFile(cfgFile)
+	bytes, err := os.ReadFile(cfgFile)
 	if os.IsNotExist(err) {
 		return config.Format{}, nil
 	}
