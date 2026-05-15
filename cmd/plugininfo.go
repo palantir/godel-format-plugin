@@ -38,7 +38,7 @@ var (
 			pluginapi.TaskInfoCommand("run"),
 			pluginapi.TaskInfoVerifyOptions(
 				pluginapi.VerifyOptionsApplyFalseArgs("--verify"),
-				pluginapi.VerifyOptionsOrdering(intPtr(verifyorder.Format)),
+				pluginapi.VerifyOptionsOrdering(new(verifyorder.Format)),
 			),
 		),
 		pluginapi.PluginInfoUpgradeConfigTaskInfo(
