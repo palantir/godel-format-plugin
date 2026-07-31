@@ -38,7 +38,7 @@ var (
 			pluginapi.TaskInfoCommand("run"),
 			pluginapi.TaskInfoVerifyOptions(
 				pluginapi.VerifyOptionsApplyFalseArgs("--verify"),
-				pluginapi.VerifyOptionsOrdering(intPtr(verifyorder.Format)),
+				pluginapi.VerifyOptionsOrdering(new(verifyorder.Format)),
 			),
 		),
 		pluginapi.PluginInfoUpgradeConfigTaskInfo(
@@ -47,8 +47,3 @@ var (
 		),
 	)
 )
-
-//go:fix inline
-func intPtr(val int) *int {
-	return new(val)
-}
