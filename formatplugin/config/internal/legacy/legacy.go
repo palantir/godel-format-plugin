@@ -125,10 +125,8 @@ func upgradeLegacyConfig(legacyCfg Config, factory formatplugin.Factory) (v0.Con
 		}
 
 		assetCfgBytes, err := yaml.Marshal(AssetConfig{
-			ConfigWithLegacy: versionedconfig.ConfigWithLegacy{
-				Legacy: true,
-			},
-			Args: legacyCfg.Formatters[k].Args,
+			Legacy: true,
+			Args:   legacyCfg.Formatters[k].Args,
 		})
 		if err != nil {
 			return v0.Config{}, errors.Wrapf(err, "failed to marshal formatter %q legacy configuration", k)
